@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:openseasapp/src/constants/endpoint.dart';
+import 'package:openseasapp/src/models/newformModel.dart';
 import 'package:openseasapp/src/models/userListModel.dart';
 
 import '../helper/gobalHelpper.dart';
@@ -13,6 +14,8 @@ import 'package:http/http.dart' as http;
 import '../models/reciberForm.Model.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:http_parser/http_parser.dart';
+
+import '../models/saveFormModel.dart';
 
 class AppProvider {
   Future<GenericResponse> loginApp({String interID = 'OPENSEASSHIPPING'}) async {
@@ -100,7 +103,7 @@ class AppProvider {
     }
   }
 
-  Future<Map> saveForm({required Map infoPost}) async {
+  Future<GenericResponse> saveForm({required Map infoPost}) async {
     final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
@@ -116,11 +119,40 @@ class AppProvider {
 
       final decodedata = json.decode(response.body);
 
-      return decodedata;
+      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? SaveFormModel.fromJson(decodedata["result"]) : null);
+
+      return respuesta;
       // return listDocumentType;
     } catch (e) {
-      print(e);
-      return {};
+      return GenericResponse(message: e.toString(), success: false);
+    }
+  }
+
+  Future<List<ResultData>> newForm() async {
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
+
+    try {
+      //   print(ResultAppLogin.instance.token);
+      // print(json.encode(userModel.toJson()));
+      final url = Uri.parse(_baseUrl + "itmsshipping/createForm");
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},
+      ).timeout(const Duration(minutes: 1));
+
+      final decodedata = json.decode(response.body);
+
+      //  final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? List<ResultData>.from(decodedata["result"].map((x) => ResultData.fromJson(x)))) : null);
+
+      List<ResultData> respuesta = [];
+      if (decodedata["success"]) {
+        respuesta = List<ResultData>.from(decodedata["result"].map((x) => ResultData.fromJson(x)));
+      }
+      return respuesta;
+      // return listDocumentType;
+    } catch (e) {
+      return [];
     }
   }
 

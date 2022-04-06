@@ -267,7 +267,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   //print(resp);
                   _alerta.disspose();
 
-                  final _alerta2 = Alertas(titulo: resp["message"], ctn: context, tipo: resp["success"] ? 2 : 3);
+                  final _alerta2 = Alertas(titulo: resp.message, ctn: context, tipo: resp.success ? 2 : 3);
                   _alerta2.showAlert();
                   await Future.delayed(const Duration(seconds: 3));
                   _alerta2.disspose();

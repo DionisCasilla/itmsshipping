@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
+import 'package:openseasapp/src/widgets/ddlIpotecca.dart';
 import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
 
 import '../widgets/txtG.dart';
@@ -253,19 +254,19 @@ class GlobalHelpper {
           ),
         );
         break;
-      // case "LIST":
-      //   List<DDLIpItems> _elementosLista = [];
-      //   _elementosLista.addAll(elemento.values.split("|").asMap().map((key, value) => MapEntry(key, DDLIpItems(id: key.toString(), descripcion: value))).values.toList());
+      case "LIST":
+        List<DDLIpItems> _elementosLista = [];
+        _elementosLista.addAll(elemento.values.split("|").asMap().map((key, value) => MapEntry(key, DDLIpItems(id: key.toString(), descripcion: value))).values.toList());
 
-      //   _elementos = DDLIp(
-      //       id: elemento.id,
-      //       label: elemento.description,
-      //       itemsList: _elementosLista,
-      //       itemSelect: (DDLIpItems item) {
-      //         selectData!(item.descripcion);
-      //       });
+        _elementos = DDLIp(
+            id: elemento.id,
+            label: elemento.description,
+            itemsList: _elementosLista,
+            itemSelect: (DDLIpItems item) {
+              selectData!(item.descripcion);
+            });
 
-      //   break;
+        break;
       default:
     }
     return _elementos;
