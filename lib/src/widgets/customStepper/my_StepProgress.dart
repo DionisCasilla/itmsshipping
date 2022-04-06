@@ -243,7 +243,7 @@ class _MyStepProgressState extends State<MyStepProgress> {
     var list = <Widget>[];
     widget._steppers.asMap().forEach((i, step) {
       if (widget._curStep == i) {
-        list.add(Text(step.titulo, style: textos(ctn: context, fSize: 16, customcolor: color050855, fontWeight: FontWeight.w500))); //stepTitulo));
+        list.add(Text(step.titulo, style: textos(ctn: context, fSize: 16, customcolor: colore83435, fontWeight: FontWeight.w500))); //stepTitulo));
       } else {
         list.add(Container());
       }

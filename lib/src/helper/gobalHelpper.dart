@@ -158,7 +158,7 @@ class GlobalHelpper {
     switch (elemento.type) {
       case "STRING":
         _elementos = TxtG(
-          controller: textEditingController,
+          controller: textEditingController ?? TextEditingController(),
           id: elemento.id,
           label: elemento.description,
           // onChangedText: (String s) => elemento.selectData(s),
@@ -256,15 +256,18 @@ class GlobalHelpper {
         break;
       case "LIST":
         List<DDLIpItems> _elementosLista = [];
-        _elementosLista.addAll(elemento.values.split("|").asMap().map((key, value) => MapEntry(key, DDLIpItems(id: key.toString(), descripcion: value))).values.toList());
 
-        _elementos = DDLIp(
-            id: elemento.id,
-            label: elemento.description,
-            itemsList: _elementosLista,
-            itemSelect: (DDLIpItems item) {
-              selectData!(item.descripcion);
-            });
+        final _valores = elemento.values.split("|");
+
+        // _elementosLista.addAll(elemento.values.split("|").asMap().map((key, value) => MapEntry(key, DDLIpItems(id: key.toString(), descripcion: value)).value).toList());
+
+        // _elementos = DDLIp(
+        //     id: elemento.id,
+        //     label: elemento.description,
+        //     itemsList: _elementosLista,
+        //     itemSelect: (DDLIpItems item) {
+        //       selectData!(item.descripcion);
+        //     });
 
         break;
       default:

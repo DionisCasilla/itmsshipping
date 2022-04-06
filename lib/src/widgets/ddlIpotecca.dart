@@ -2,8 +2,10 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:openseasapp/src/constants/colors.dart';
+import 'package:openseasapp/src/constants/constants.dart';
 
-import 'package:ipoteccaapp/src/index.dart';
+import '../setup/setup.dart';
 
 class DDLIp extends StatefulWidget {
   final String label;
@@ -60,7 +62,7 @@ class _DDLIpState extends State<DDLIp> {
           borderRadius: BorderRadius.circular(
             widthheight(ctn: context, fSize: 8),
           ),
-          border: Border.all(color: color385891)),
+          border: Border.all(color: colorE5E5E5)),
       child: Stack(
         // clipBehavior: Clip,
         // crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +72,7 @@ class _DDLIpState extends State<DDLIp> {
             left: widthheight(ctn: context, fSize: 20, tipo: 2),
             child: Text(
               widget.label,
-              style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, customcolor: color385891, fontFamily: "Poppins"),
+              style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, customcolor: colorE5E5E5, fontFamily: "Poppins"),
             ),
           ),
           Padding(
@@ -140,7 +142,7 @@ class _DDLIpState extends State<DDLIp> {
                   backgroundImage: item.optional1 == "" ? null : NetworkImage(item.optional1 ?? ''),
                   child: item.optional1 == ""
                       ? Image.asset(
-                          AppImages.banks,
+                          AppImages.openseasIco,
                           width: 20,
                         )
                       : null,

@@ -97,9 +97,9 @@ class TxtG extends StatelessWidget {
                 maskString: maskString,
                 isReadOnly: isReadOnly,
                 textInputFormatter: textInputFormatter ?? [],
-                prefixIconF: prefixIconF!,
+                prefixIconF: prefixIconF,
                 prefixIconFZise: prefixIconFZise!,
-                prefixIconClick: prefixIconClick!,
+                prefixIconClick: prefixIconClick,
                 // isFillColor: false,
               ),
             )
@@ -117,14 +117,14 @@ class TxtGeneric extends StatefulWidget {
   final bool isFillColor;
   final bool? isObscureText;
   final EdgeInsets txtPaddingAll;
-  final double txtRadiusBorder;
+  final double? txtRadiusBorder;
   final TextEditingController? txtController;
   final dynamic prefixIconF;
-  final double prefixIconFZise;
+  final double? prefixIconFZise;
   final IconData? suffixIconF;
   final Widget? suffixWi;
-  final double suffixIconFZise;
-  final Color colorIcon;
+  final double? suffixIconFZise;
+  final Color? colorIcon;
   final Stream? txtStream;
   final Function? onChangedStream;
   final Function? onChangedText;

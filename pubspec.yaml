@@ -55,6 +55,7 @@ dependencies:
   esc_pos_utils_plus: ^2.0.1+6
   print_bluetooth_thermal: ^1.0.5
   dio: ^4.0.4
+  dropdown_search: ^2.0.1
 
 dev_dependencies:
   flutter_test:

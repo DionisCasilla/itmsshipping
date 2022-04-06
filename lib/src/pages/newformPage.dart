@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
+import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/widgets/customStepper/my_StepProgress.dart';
 import 'package:openseasapp/src/widgets/customStepper/stepper_Model.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,15 @@ class _NewFormPageState extends State<NewFormPage> {
     // TODO: implement initState
     super.initState();
     final _listItems = Provider.of<AppBloc>(context, listen: false).newform;
-    _steps = _listItems.map((form) => StepperModel(titulo: form.description, contenido: Container())).toList();
+    _steps = _listItems
+        .map((form) => StepperModel(
+            titulo: form.description,
+            contenido: SingleChildScrollView(
+                child: Padding(
+              padding: EdgeInsets.only(top: 200),
+              child: Column(children: form.information.map((e) => GlobalHelpper().generarField(ctn: context, elemento: e)).toList()),
+            ))))
+        .toList();
   }
 
   @override
