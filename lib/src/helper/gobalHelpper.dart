@@ -259,15 +259,20 @@ class GlobalHelpper {
 
         final _valores = elemento.values.split("|");
 
-        // _elementosLista.addAll(elemento.values.split("|").asMap().map((key, value) => MapEntry(key, DDLIpItems(id: key.toString(), descripcion: value)).value).toList());
+        _valores.map((list) {
+          _elementosLista.add(DDLIpItems(id: list, descripcion: list));
+        }).toList();
 
-        // _elementos = DDLIp(
-        //     id: elemento.id,
-        //     label: elemento.description,
-        //     itemsList: _elementosLista,
-        //     itemSelect: (DDLIpItems item) {
-        //       selectData!(item.descripcion);
-        //     });
+//        print(_elementosLista);
+
+        _elementos = DDLIp(id: elemento.id, label: elemento.description, itemsList: _elementosLista, itemSelect: selectData
+            //  (item) async {
+            //   print(item!);
+
+            //   selectData!(item.descripcion);
+
+            // }
+            );
 
         break;
       default:

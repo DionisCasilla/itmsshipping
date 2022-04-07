@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
+import 'package:openseasapp/src/models/newformModel.dart';
+import 'package:openseasapp/src/widgets/btnIpoteca.dart';
 import 'package:openseasapp/src/widgets/customStepper/my_StepProgress.dart';
 import 'package:openseasapp/src/widgets/customStepper/stepper_Model.dart';
 import 'package:provider/provider.dart';
@@ -20,19 +22,27 @@ class _NewFormPageState extends State<NewFormPage> {
   int _curStep = 0;
   List<StepperModel> _steps = [];
   PageController _pageController = PageController();
+  List<ResultData> _listItems = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    final _listItems = Provider.of<AppBloc>(context, listen: false).newform;
+    _listItems = Provider.of<AppBloc>(context, listen: false).newform;
     _steps = _listItems
         .map((form) => StepperModel(
             titulo: form.description,
             contenido: SingleChildScrollView(
-                child: Padding(
-              padding: EdgeInsets.only(top: 200),
-              child: Column(children: form.information.map((e) => GlobalHelpper().generarField(ctn: context, elemento: e)).toList()),
+                child: Column(
+              children: [
+                Column(children: form.information.map((e) => GlobalHelpper().generarField(ctn: context, elemento: e)).toList()),
+                BtnIpotecca(
+                  label: "Next",
+                  onPressed: _clickSiguiente,
+                  tipoBtn: 1,
+                  borderR: true,
+                )
+              ],
             ))))
         .toList();
   }
@@ -75,7 +85,7 @@ class _NewFormPageState extends State<NewFormPage> {
           width: MediaQuery.of(context).size.width,
           curStep: _curStep,
           activeColor: colore83435, // Colors.yellow,
-          lineWidth: 4,
+          lineWidth: 6,
           pageController2: _pageController,
           //  _curStep
           setCurrent: (int i) {
@@ -97,6 +107,8 @@ class _NewFormPageState extends State<NewFormPage> {
 
   _clickSiguiente() {
     // Vibrate.feedback(FeedbackType.impact);
+_steps[_curStep].contenido
+
     setState(() {
       if (_curStep < _steps.length - 1) {
         _curStep += 1;

@@ -207,8 +207,9 @@ class SelectOperationPage extends StatelessWidget {
     //   _connceting = true;
     // });
     final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
-    final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: listResult[0].macAdress);
-    print("state conected $result");
+
+    // final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: listResult[0].macAdress);
+    // print("state conected $result");
     // if (result) connected = true;
     // setState(() {
     //   _connceting = false;

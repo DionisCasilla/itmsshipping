@@ -55,11 +55,11 @@ class TxtG extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: (lineOnText == 1 ? 12 : 10.0), bottom: (lineOnText == 1 ? 0 : 10.0)),
+      padding: EdgeInsets.only(top: (lineOnText == 1 ? 8 : 10.0), bottom: (lineOnText == 1 ? 0 : 10.0)),
       child: Container(
         padding: EdgeInsets.zero,
         margin: EdgeInsets.zero,
-        height: widthheight(ctn: context, fSize: (lineOnText == 1 ? 100 : 60 * double.parse(lineOnText.toString())), tipo: 2),
+        height: widthheight(ctn: context, fSize: (lineOnText == 1 ? 90 : 60 * double.parse(lineOnText.toString())), tipo: 2),
         width: widthheight(ctn: context, fSize: 328),
         alignment: Alignment.centerLeft,
         decoration: BoxDecoration(
@@ -88,7 +88,7 @@ class TxtG extends StatelessWidget {
               padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: lineOnText == 1 ? 16 : 18), left: widthheight(ctn: context, fSize: 14), right: widthheight(ctn: context, fSize: 16)),
               child: TxtGeneric(
                 // isDense: false,
-                txtController: controller!,
+                txtController: controller ?? TextEditingController(),
                 inputType: textInputType,
                 isBorder: true,
                 txtonTap: txtonTap ?? () {},

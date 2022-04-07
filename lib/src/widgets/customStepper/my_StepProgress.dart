@@ -45,9 +45,9 @@ class MyStepProgress extends StatefulWidget {
 }
 
 class _MyStepProgressState extends State<MyStepProgress> {
-  final Color _inactiveColor = colorE5E5E5;
+  final Color _inactiveColor = Colors.white;
 
-  final Color _inactiveColorLine = colorE5E5E5;
+  final Color _inactiveColorLine = colorCED4DA;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class _MyStepProgressState extends State<MyStepProgress> {
               right: 0,
               child: Container(
                   padding: EdgeInsets.only(
-                    top: 40,
+                    top: widthheight(ctn: context, fSize: 40),
                     left: widget._curStep > 0 ? 0.0 : widthheight(ctn: context, fSize: 50),
                     right: widthheight(ctn: context, fSize: 24.0),
                   ),
@@ -116,7 +116,7 @@ class _MyStepProgressState extends State<MyStepProgress> {
             ),
 
             Padding(
-              padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: 100)),
+              padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: 140, tipo: 2)),
               child: Column(
                 children: [
                   Expanded(
@@ -139,19 +139,19 @@ class _MyStepProgressState extends State<MyStepProgress> {
       // print("Step: ${widget._curStep}");
       //colors according to state
       var circleColor = (widget._curStep > i)
-          ? color050855
+          ? colorCED4DA
           : (widget._curStep == i)
               ? widget._activeColor
               : (widget._curStep > i)
                   ? _inactiveColor
                   : _inactiveColorLine;
       var circleColorlleno = (widget._curStep == i)
-          ? color050855
+          ? colorCED4DA
           : (widget._curStep > i)
               ? color050855
               : _inactiveColorLine;
 
-      var lineColor = widget._curStep > i ? color050855 : _inactiveColorLine;
+      var lineColor = widget._curStep > i ? colorCED4DA : _inactiveColorLine;
       // var lineColor2 = _curStep > i + 1 ? _activeColor : _inactiveColorLine;
 
       // var iconColor = (i == 0 || _curStep > i) ? _activeColor : _inactiveColorLine;

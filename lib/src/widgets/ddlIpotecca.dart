@@ -11,9 +11,9 @@ class DDLIp extends StatefulWidget {
   final String label;
   final String? hintText;
   final TextInputType? textInputType;
-  final List<dynamic> itemsList;
-  final dynamic items;
-  final Function itemSelect;
+  final List<dynamic>? itemsList;
+  final DDLIpItems? items;
+  final Function? itemSelect;
   final Mode menuMode;
   final bool showSearchBox;
   final bool showIcon;
@@ -55,14 +55,14 @@ class _DDLIpState extends State<DDLIp> {
     return Container(
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
-      height: widthheight(ctn: context, fSize: 64, tipo: 2),
+      height: widthheight(ctn: context, fSize: 70, tipo: 2),
       width: widthheight(ctn: context, fSize: 328),
       alignment: Alignment.centerLeft,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            widthheight(ctn: context, fSize: 8),
-          ),
-          border: Border.all(color: colorE5E5E5)),
+      // decoration: BoxDecoration(
+      //     borderRadius: BorderRadius.circular(
+      //       widthheight(ctn: context, fSize: 8),
+      //     ),
+      //     border: Border.all(color: colorE5E5E5)),
       child: Stack(
         // clipBehavior: Clip,
         // crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,45 +72,63 @@ class _DDLIpState extends State<DDLIp> {
             left: widthheight(ctn: context, fSize: 20, tipo: 2),
             child: Text(
               widget.label,
-              style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, customcolor: colorE5E5E5, fontFamily: "Poppins"),
+              style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins"),
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: 18), left: widthheight(ctn: context, fSize: 16), right: widthheight(ctn: context, fSize: 16)),
-            child: DropdownSearch<dynamic>(
-              mode: widget.menuMode,
+            padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: 20), left: widthheight(ctn: context, fSize: 16), right: widthheight(ctn: context, fSize: 16)),
+            child: Container(
+              height: widthheight(ctn: context, fSize: 70),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 1.7, color: color050855), borderRadius: BorderRadius.circular(4)),
+              child: DropdownSearch<dynamic>(
+                mode: widget.menuMode,
 
-              // showSelectedItem: false,
-              items: widget.itemsList,
-              selectedItem: widget.items,
-              itemAsString: (item) => item.descripcion.toString(),
-              showSearchBox: widget.showSearchBox,
-              dropdownBuilder: _customDropDownExample,
-              popupItemBuilder: _customPopupItemBuilderExample,
-              popupTitle: widget.showSearchBox
-                  ? SizedBox(
-                      height: widthheight(ctn: context, fSize: 30),
-                      child: Center(
-                        child: Text(
-                          "Buscador",
-                          style: textos(ctn: context, fSize: 16),
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
-              emptyBuilder: (context, _) => SizedBox(
-                // height: widthheight(ctn: context, fSize: 30),
-                child: Center(
-                  child: Text(
-                    "Datos no encontrados",
-                    style: textos(ctn: context, fSize: 24, fontWeight: FontWeight.w600),
+                // showSelectedItem: false,
+                items: widget.itemsList,
+                selectedItem: widget.items,
+                itemAsString: (item) => item.descripcion.toString(),
+                showSearchBox: widget.showSearchBox,
+
+                dropdownSearchDecoration: InputDecoration(
+                  //  labelText: "Custom BottomShet mode",
+
+                  contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+                  border: OutlineInputBorder(borderSide: BorderSide(width: 4, color: colorE5E5E5)),
+                ),
+                popupShape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
                 ),
+                dropdownBuilder: _customDropDownExample,
+                popupItemBuilder: _customPopupItemBuilderExample,
+                popupTitle: widget.showSearchBox
+                    ? SizedBox(
+                        height: widthheight(ctn: context, fSize: 30),
+                        child: Center(
+                          child: Text(
+                            "Buscador",
+                            style: textos(ctn: context, fSize: 16),
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                emptyBuilder: (context, _) => SizedBox(
+                  // height: widthheight(ctn: context, fSize: 30),
+                  child: Center(
+                    child: Text(
+                      "Datos no encontrados",
+                      style: textos(ctn: context, fSize: 24, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                onChanged: (a) => widget.itemSelect,
+                //  (cm) {
+                //   ddlIpItems = cm!;
+                //   // widget.itemSelect!(ddlIpItems);
+                // },
               ),
-              onChanged: (cm) {
-                ddlIpItems = cm!;
-                widget.itemSelect(ddlIpItems);
-              },
             ),
           )
         ],
@@ -124,9 +142,9 @@ class _DDLIpState extends State<DDLIp> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
+              border: Border.all(color: color050855),
               borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
+              //  color: Colors.white,
             ),
       child: ListTile(
           selected: isSelected,
@@ -138,7 +156,7 @@ class _DDLIpState extends State<DDLIp> {
           leading: widget.showIcon
               ? CircleAvatar(
                   // this does not work - throws 404 error
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
                   backgroundImage: item.optional1 == "" ? null : NetworkImage(item.optional1 ?? ''),
                   child: item.optional1 == ""
                       ? Image.asset(
@@ -157,10 +175,11 @@ class _DDLIpState extends State<DDLIp> {
     }
 
     return Container(
+        color: Colors.white,
         child: Text(
-      item.descripcion,
-      style: textos(ctn: context),
-    )
+          item.descripcion,
+          style: textos(ctn: context),
+        )
 
         //  (item.avatar == null)
         //     ? ListTile(
