@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/widgets/ddlIpotecca.dart';
 import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
+import 'package:checkbox_grouped/checkbox_grouped.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../constants/colors.dart';
 import '../widgets/txtG.dart';
 
 class GlobalHelpper {
@@ -152,7 +157,19 @@ class GlobalHelpper {
     return (to.difference(from).inHours / 24).round();
   }
 
-  Widget generarField({required BuildContext ctn, required dynamic elemento, TextEditingController? textEditingController, Function? selectData}) {
+  Future<String> getFilePath(uniqueFileName) async {
+    String path = '';
+
+    Directory? dir = await getExternalStorageDirectory();
+
+    path = '${dir!.path}/$uniqueFileName';
+
+    // print(path);
+
+    return path;
+  }
+
+  Widget generarField({required BuildContext ctn, required dynamic elemento, TextEditingController? textEditingController, Function? selectData, GroupController? controller}) {
     Widget _elementos = SizedBox();
 
     switch (elemento.type) {
@@ -175,6 +192,16 @@ class GlobalHelpper {
         );
 
         break;
+      case "DECIMAL":
+        _elementos = TxtG(
+          id: elemento.id,
+          label: elemento.description,
+          textInputType: TextInputType.number,
+          controller: textEditingController,
+          // onChangedText: (String s) => elemento.selectData(s),
+        );
+
+        break;
       case "TEXT":
         _elementos = TxtG(
           id: elemento.id,
@@ -184,6 +211,46 @@ class GlobalHelpper {
           controller: textEditingController,
           // onChangedText: (String s) => elemento.selectData(s),
         );
+
+        break;
+      case "CHECKBOXLIST":
+        // GroupController controller = GroupController();
+        List<DDLIpItems> _elementosLista = [];
+
+        final _valores = elemento.values.split("|");
+
+        _valores.map((list) {
+          _elementosLista.add(DDLIpItems(id: list, descripcion: list, select: false));
+        }).toList();
+
+        _elementos = Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              elemento.description,
+              style: textos(ctn: ctn, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
+            ),
+            SimpleGroupedChips<String>(
+              controller: controller ?? GroupController(isMultipleSelection: true),
+              values: _valores,
+              itemTitle: _valores,
+              onItemSelected: (a) {
+                print(a);
+                final _a = a as List<String>;
+
+                selectData!(_a.join("|"));
+              },
+              chipGroupStyle: ChipGroupStyle.minimize(
+                backgroundColorItem: Colors.red.shade600,
+                selectedColorItem: color050855.withOpacity(0.6),
+                itemTitleStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+              ),
+            ),
+          ],
+        );
+        // onChangedText: (String s) => elemento.selectData(s),
 
         break;
       case "DATE":
@@ -265,7 +332,16 @@ class GlobalHelpper {
 
 //        print(_elementosLista);
 
-        _elementos = DDLIp(id: elemento.id, label: elemento.description, itemsList: _elementosLista, itemSelect: selectData
+        _elementos = DDLIp(
+            id: elemento.id,
+            label: elemento.description,
+            itemsList: _elementosLista,
+            itemSelect: (a) {
+              final dataselect = a as DDLIpItems;
+              // print(dataselect.descripcion);
+              selectData!(dataselect.descripcion);
+            }
+
             //  (item) async {
             //   print(item!);
 

@@ -1,4 +1,4 @@
-package com.example.openseasapp
+package com.itmsrd.openseasapp
 
 import io.flutter.embedding.android.FlutterActivity
 

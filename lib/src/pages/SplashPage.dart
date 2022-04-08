@@ -2,8 +2,10 @@ import 'package:animate_do/animate_do.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
+import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/pages/homePage.dart';
 import 'package:openseasapp/src/setup/setup.dart';
+import 'package:openseasapp/src/widgets/updateApp.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/appImages.dart';
@@ -54,6 +56,8 @@ class _SplashAppPageState extends State<SplashAppPage> {
   }
 
   getInitData() async {
+    await Future.delayed(Duration.zero, () => _actualizar());
+
     Future.delayed(
         const Duration(seconds: 7),
         () => Navigator.pushReplacement(
@@ -61,5 +65,19 @@ class _SplashAppPageState extends State<SplashAppPage> {
               MaterialPageRoute(builder: (context) => HomePage()),
             ));
     // await Provider.of<AppBloc>(context, listen: false).getIniInfo();
+  }
+
+  Future<void> _actualizar() async {
+    final res = true; // await GlobalHelpper().(context);
+
+    //  print(res);
+    if (res) {
+      await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return ActualizacionPage();
+          });
+    }
   }
 }

@@ -37,6 +37,7 @@ class ResultData {
     required this.description,
     required this.code,
     required this.enabled,
+    this.requered = false,
     required this.id,
     // this.createdDate,
     required this.information,
@@ -45,6 +46,7 @@ class ResultData {
   String description;
   String code;
   bool enabled;
+  bool requered;
   String id;
   // CreatedDate createdDate;
   List<InformationModel> information;
@@ -53,6 +55,7 @@ class ResultData {
         description: json["description"],
         code: json["code"],
         enabled: json["enabled"],
+        requered: json["requered"],
         id: json["id"],
         //   createdDate: json["createdDate"] == null ? null : createdDateValues.map[json["createdDate"]],
         information: List<InformationModel>.from(json["information"].map((x) => InformationModel.fromJson(x))),
@@ -72,6 +75,7 @@ class InformationModel {
   InformationModel({
     this.description,
     this.enabled,
+    this.requered = false,
     this.order,
     this.values,
     this.type,
@@ -81,6 +85,7 @@ class InformationModel {
 
   String? description;
   bool? enabled;
+  bool requered = false;
   int? order;
   String? values;
   String? type;
@@ -90,6 +95,7 @@ class InformationModel {
   factory InformationModel.fromJson(Map<String, dynamic> json) => InformationModel(
         description: json["description"] ?? "",
         enabled: json["enabled"] ?? false,
+        requered: json["requered"] ?? false,
         order: json["order"] ?? 0,
         values: json["values"] ?? "",
         type: json["type"] ?? "",

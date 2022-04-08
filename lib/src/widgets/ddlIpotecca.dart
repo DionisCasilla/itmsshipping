@@ -123,7 +123,7 @@ class _DDLIpState extends State<DDLIp> {
                     ),
                   ),
                 ),
-                onChanged: (a) => widget.itemSelect,
+                onChanged: (a) => widget.itemSelect!(a),
                 //  (cm) {
                 //   ddlIpItems = cm!;
                 //   // widget.itemSelect!(ddlIpItems);

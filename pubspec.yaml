@@ -54,8 +54,10 @@ dependencies:
   pdf: ^3.7.3
   esc_pos_utils_plus: ^2.0.1+6
   print_bluetooth_thermal: ^1.0.5
-  dio: ^4.0.4
+  dio: ^4.0.6
   dropdown_search: ^2.0.1
+  checkbox_grouped: ^1.8.0
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:
