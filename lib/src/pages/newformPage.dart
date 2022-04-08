@@ -169,15 +169,15 @@ class _NewFormPageState extends State<NewFormPage> {
   }
 
   Future<void> _saveform() async {
-    String datos = "{";
+    Map datos = {};
 
     for (var formGrupo in _frm1) {
       formGrupo.formularios.forEach((element) {
         String valor = "${element.textEditingController.text}${element.selectData}";
-        datos += NewFomrToSave(key: element.id, value: valor).toJson();
+        datos = NewFomrToSave(key: element.id, value: valor).toJson();
       });
     }
-    datos += "}";
+
     print(datos);
 
     var json = jsonEncode(datos);
