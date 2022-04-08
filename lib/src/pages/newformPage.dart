@@ -194,7 +194,7 @@ class NewFomrToSave {
 
   @override
   Map toJson() {
-    return '{$key:$value}';
+    return {key.toString(): value.toString()};
   }
 }
 
