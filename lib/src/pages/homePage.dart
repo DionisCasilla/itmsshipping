@@ -44,57 +44,60 @@ class HomePage extends StatelessWidget {
           elevation: 0.0,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                "SELECT USER TO CONTINUE",
-                style: textos(ctn: context, customcolor: color050855, fontWeight: FontWeight.w700, fSize: 18),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Expanded(child: SingleChildScrollView(child: Consumer<AppBloc>(builder: (_, appBloc, __) {
-                if (appBloc.userListModel.isEmpty) return const SizedBox();
+      body: Container(
+        color: colorE5E5E5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "SELECT USER TO CONTINUE",
+                  style: textos(ctn: context, customcolor: color050855, fontWeight: FontWeight.w700, fSize: 18),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(child: SingleChildScrollView(child: Consumer<AppBloc>(builder: (_, appBloc, __) {
+                  if (appBloc.userListModel.isEmpty) return const SizedBox();
 
-                return Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  runAlignment: WrapAlignment.center,
-                  // direction: Axis.horizontal,
-                  runSpacing: 10,
-                  spacing: 10,
-                  children: appBloc.userListModel
-                      .map((user) => Hero(
-                            tag: Key(user.userId.toString()),
-                            child: CardUser(
-                              img: AppImages.userIco,
-                              onTap: () {
-                                // _router.navigateTo(context, "/operation", transition: TransitionType.inFromLeft);
-                                // Navigator.push(context, FadeRoute(page: const SelectOperationPage()));
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => SelectOperationPage()),
-                                );
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    runAlignment: WrapAlignment.center,
+                    // direction: Axis.horizontal,
+                    runSpacing: 10,
+                    spacing: 10,
+                    children: appBloc.userListModel
+                        .map((user) => Hero(
+                              tag: Key(user.userId.toString()),
+                              child: CardUser(
+                                img: AppImages.userIco,
+                                onTap: () {
+                                  // _router.navigateTo(context, "/operation", transition: TransitionType.inFromLeft);
+                                  // Navigator.push(context, FadeRoute(page: const SelectOperationPage()));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SelectOperationPage()),
+                                  );
 
-                                UserModel.instance.interId = user.interId;
-                                UserModel.instance.userId = user.userId;
-                                UserModel.instance.userName = user.userName;
-                                // Navigator.pushNamed(context, '/operation');
-                              },
-                              username: user.userName,
-                              roll: user.userRole,
-                            ),
-                          ))
-                      .toList(),
-                );
-              }))),
-            ],
+                                  UserModel.instance.interId = user.interId;
+                                  UserModel.instance.userId = user.userId;
+                                  UserModel.instance.userName = user.userName;
+                                  // Navigator.pushNamed(context, '/operation');
+                                },
+                                username: user.userName,
+                                roll: user.userRole,
+                              ),
+                            ))
+                        .toList(),
+                  );
+                }))),
+              ],
+            ),
           ),
         ),
       ),

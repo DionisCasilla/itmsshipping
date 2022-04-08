@@ -94,24 +94,27 @@ class _NewFormPageState extends State<NewFormPage> {
           automaticallyImplyLeading: true,
         ),
       ),
-      body: SizedBox(
-        child: MyStepProgress(
-          onStepCancel: () {
-            // print("sdsd");
-          },
-          onStepContinue: () => _clickSiguiente,
-          steppers: _steps,
-          width: MediaQuery.of(context).size.width,
-          curStep: _curStep,
-          activeColor: colore83435, // Colors.yellow,
-          lineWidth: 6,
-          pageController2: _pageController,
-          //  _curStep
-          setCurrent: (int i) {
-            setState(() {
-              _curStep = i;
-            });
-          },
+      body: Container(
+        color: colorE5E5E5,
+        child: SizedBox(
+          child: MyStepProgress(
+            onStepCancel: () {
+              // print("sdsd");
+            },
+            onStepContinue: () => _clickSiguiente,
+            steppers: _steps,
+            width: MediaQuery.of(context).size.width,
+            curStep: _curStep,
+            activeColor: colore83435, // Colors.yellow,
+            lineWidth: 6,
+            pageController2: _pageController,
+            //  _curStep
+            setCurrent: (int i) {
+              setState(() {
+                _curStep = i;
+              });
+            },
+          ),
         ),
       ),
     );

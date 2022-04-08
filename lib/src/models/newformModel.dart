@@ -54,8 +54,8 @@ class ResultData {
   factory ResultData.fromJson(Map<String, dynamic> json) => ResultData(
         description: json["description"],
         code: json["code"],
-        enabled: json["enabled"],
-        requered: json["requered"],
+        enabled: json["enabled"] ?? false,
+        requered: json["requered"] ?? false,
         id: json["id"],
         //   createdDate: json["createdDate"] == null ? null : createdDateValues.map[json["createdDate"]],
         information: List<InformationModel>.from(json["information"].map((x) => InformationModel.fromJson(x))),

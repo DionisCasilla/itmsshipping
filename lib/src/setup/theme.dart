@@ -17,7 +17,7 @@ class ThemeOpenSeas {
         // primaryVariant: color050855,
         secondary: color050855,
         // secondaryVariant: color050855,
-        background: colorE5E5E5,
+        background: colorFCFCFC,
         surface: color050855,
         onBackground: color050855,
         onSurface: color050855,
@@ -34,7 +34,7 @@ class ThemeOpenSeas {
             primaryColor: color050855,
             // accentColor: ReferenciaPrimary,
             //appBarTheme: AppBarTheme(color: ReferenciaPrimary),
-            scaffoldBackgroundColor: colorE5E5E5)
+            scaffoldBackgroundColor: colorFCFCFC)
         //  iconTheme: IconThemeData(color: ReferenciaBlack),
         // inputDecorationTheme: InputDecorationTheme(fillColor: ReferenciaPrimary))
         // We can also add on some extra properties that ColorScheme seems to miss

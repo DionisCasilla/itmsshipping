@@ -36,6 +36,7 @@ class SelectOperationPage extends StatelessWidget {
     connect();
 
     return Scaffold(
+      backgroundColor: colorE5E5E5,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(widthheight(ctn: context, fSize: 80)), // here the desired height
         child: AppBar(
@@ -61,41 +62,44 @@ class SelectOperationPage extends StatelessWidget {
           automaticallyImplyLeading: true,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: widthheight(ctn: context, fSize: 34),
-              ),
-              btnAcciones(
-                  context: context,
-                  iconData: FeatherIcons.fileText,
-                  label: "Shipping Form",
-                  onClick: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const NewFormPage()),
-                    );
-                  }),
-              SizedBox(
-                height: widthheight(ctn: context, fSize: 6),
-              ),
-              btnAcciones(
-                  context: context,
-                  iconData: FeatherIcons.truck,
-                  label: "Delivery",
-                  onClick: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ScanOrderPage()),
-                    );
-                  }),
-              SizedBox(
-                height: widthheight(ctn: context, fSize: 6),
-              ),
-              btnAcciones(context: context, iconData: FeatherIcons.truck, label: "Printer", onClick: () async => printTest())
-            ],
+      body: Container(
+        color: colorE5E5E5,
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: widthheight(ctn: context, fSize: 34),
+                ),
+                btnAcciones(
+                    context: context,
+                    iconData: FeatherIcons.fileText,
+                    label: "Shipping Form",
+                    onClick: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NewFormPage()),
+                      );
+                    }),
+                SizedBox(
+                  height: widthheight(ctn: context, fSize: 6),
+                ),
+                btnAcciones(
+                    context: context,
+                    iconData: FeatherIcons.truck,
+                    label: "Delivery",
+                    onClick: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ScanOrderPage()),
+                      );
+                    }),
+                SizedBox(
+                  height: widthheight(ctn: context, fSize: 6),
+                ),
+                btnAcciones(context: context, iconData: FeatherIcons.truck, label: "Printer", onClick: () async => printTest())
+              ],
+            ),
           ),
         ),
       ),
@@ -157,8 +161,8 @@ class SelectOperationPage extends StatelessWidget {
     int porcentbatery = 0;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await PrintBluetoothThermal.platformVersion;
-      porcentbatery = await PrintBluetoothThermal.batteryLevel;
+      // platformVersion = await PrintBluetoothThermal.platformVersion;
+      // porcentbatery = await PrintBluetoothThermal.batteryLevel;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -168,15 +172,15 @@ class SelectOperationPage extends StatelessWidget {
     // setState to update our non-existent appearance.
     // if (!mounted) return;
 
-    final bool result = await PrintBluetoothThermal.bluetoothEnabled;
+    // final bool result = await PrintBluetoothThermal.bluetoothEnabled;
     //print("bluetooth enabled: $result");
-    if (result) {
-      //    _msj = "Bluetooth enabled, please search and connect";
-      print("Bluetooth enabled, please search and connect");
-    } else {
-//_msj = "Bluetooth not enabled";
-      print("Bluetooth not enabled");
-    }
+//     if (true) {
+//       //    _msj = "Bluetooth enabled, please search and connect";
+//       print("Bluetooth enabled, please search and connect");
+//     } else {
+// //_msj = "Bluetooth not enabled";
+//       print("Bluetooth not enabled");
+//     }
 
     // setState(() {
     // //  _info = platformVersion + " ($porcentbatery% battery)";
@@ -206,7 +210,7 @@ class SelectOperationPage extends StatelessWidget {
     // setState(() {
     //   _connceting = true;
     // });
-    final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
+    // final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
 
     // final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: listResult[0].macAdress);
     // print("state conected $result");
