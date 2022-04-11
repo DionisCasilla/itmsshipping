@@ -177,15 +177,15 @@ class _NewFormPageState extends State<NewFormPage> {
     for (var formGrupo in _frm1) {
       formGrupo.formularios.forEach((element) {
         String valor = "${element.textEditingController.text}${element.selectData}";
-        datos = NewFomrToSave(key: element.id, value: valor).toJson();
+        datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
       });
     }
 
     print(datos);
 
-    var json = jsonEncode(datos);
-    print(json);
-    await AppProvider().saveNewForm(datos: {});
+    //var json = jsonEncode(datos);
+    // print(json);
+    await AppProvider().saveNewForm(datos: datos);
   }
 }
 

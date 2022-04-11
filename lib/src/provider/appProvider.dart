@@ -163,10 +163,12 @@ class AppProvider {
     try {
       //   print(ResultAppLogin.instance.token);
       // print(json.encode(userModel.toJson()));
+
+      Map datosPost = {"RowUsr": UserModel.instance.userId, "formbody": datos};
       final url = Uri.parse(_baseUrl + "itmsshipping/saveNewForm");
       final response = await http.post(
         url,
-        body: jsonEncode(datos),
+        body: jsonEncode(datosPost),
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},
       ).timeout(const Duration(minutes: 1));
 
