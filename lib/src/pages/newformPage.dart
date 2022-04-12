@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
+import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/newformModel.dart';
 import 'package:openseasapp/src/provider/appProvider.dart';
 import 'package:openseasapp/src/widgets/btnIpoteca.dart';
@@ -172,6 +173,8 @@ class _NewFormPageState extends State<NewFormPage> {
   }
 
   Future<void> _saveform() async {
+    final _alerta = Alertas(titulo: "Saving Form", ctn: context);
+    _alerta.showAlert();
     Map datos = {};
 
     for (var formGrupo in _frm1) {
@@ -185,7 +188,17 @@ class _NewFormPageState extends State<NewFormPage> {
 
     //var json = jsonEncode(datos);
     // print(json);
-    await AppProvider().saveNewForm(datos: datos);
+    final _response = await AppProvider().saveNewForm(datos: datos);
+
+    _alerta.disspose();
+
+    final _alerta2 = Alertas(titulo: _response.message, ctn: context, tipo: _response.success ? 2 : 3);
+    _alerta2.showAlert();
+
+    await Future.delayed(const Duration(seconds: 3));
+    if (_response.success) {}
+
+    _alerta2.disspose();
   }
 }
 

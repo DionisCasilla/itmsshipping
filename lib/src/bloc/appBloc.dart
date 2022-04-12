@@ -13,7 +13,7 @@ class AppBloc with ChangeNotifier {
   }
 
   AppBloc._internal() {
-    getIniInfo();
+    // getIniInfo();
     notifyListeners();
   }
 

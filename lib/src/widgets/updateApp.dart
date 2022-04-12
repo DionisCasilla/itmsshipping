@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:install_plugin_v2/install_plugin_v2.dart';
+import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class ActualizacionPage extends StatefulWidget {
   @override
@@ -17,7 +19,7 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    onClickInstallApk("");
+    onClickInstallApk(Provider.of<AppBloc>(context, listen: false).appLogin.config!.urldonwload);
   }
 
   @override

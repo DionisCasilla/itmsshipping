@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:openseasapp/src/constants/endpoint.dart';
+import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/newformModel.dart';
 import 'package:openseasapp/src/models/userListModel.dart';
 
@@ -156,7 +157,7 @@ class AppProvider {
     }
   }
 
-  Future<List<ResultData>> saveNewForm({required Map datos}) async {
+  Future<GenericResponse> saveNewForm({required Map datos}) async {
     final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
@@ -174,16 +175,17 @@ class AppProvider {
 
       final decodedata = json.decode(response.body);
 
-      //  final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? List<ResultData>.from(decodedata["result"].map((x) => ResultData.fromJson(x)))) : null);
+      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? FormSavingModel.fromJson(decodedata["result"]) : null);
 
-      List<ResultData> respuesta = [];
-      if (decodedata["success"]) {
-        respuesta = List<ResultData>.from(decodedata["result"].map((x) => ResultData.fromJson(x)));
-      }
       return respuesta;
+      // List<ResultData> respuesta = [];
+      // if (decodedata["success"]) {
+      //   respuesta = List<ResultData>.from(decodedata["result"].map((x) => ResultData.fromJson(x)));
+      // }
+      // return respuesta;
       // return listDocumentType;
     } catch (e) {
-      return [];
+      return GenericResponse(message: e.toString(), success: false);
     }
   }
 

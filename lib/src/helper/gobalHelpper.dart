@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -354,6 +355,75 @@ class GlobalHelpper {
       default:
     }
     return _elementos;
+  }
+
+  Future<bool> updateAPP(
+    BuildContext context,
+  ) async {
+    // final _prefe=PreferenciasUsuario();
+
+    Dialog dialogWithImage = Dialog(
+        backgroundColor: Colors.black54,
+        insetPadding: EdgeInsets.symmetric(horizontal: 5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        ),
+        child: CupertinoActionSheet(
+          title: Column(
+            children: [
+              Text(
+                "Actualización Disponible",
+                style: textos(ctn: context, fSize: 20, customcolor: Colors.black),
+              ),
+              SizedBox(
+                height: widthheight(ctn: context, fSize: 5),
+              ),
+              // Text(
+              //    ResultVersionesProveedoresApp.instance.mensaje??"Hemos aplicado mejoras al producto, favor actualizar tu UNIBE App y disfruta lo nuevo que te trae.",
+              //     style: textos(
+              //       ctn: context,
+              //       fSize: 16,
+              //       color: Colors.black26
+              //     ))
+            ],
+          ),
+          actions: <Widget>[
+            // CupertinoActionSheetAction(
+            //   child: Text('Cambiar foto'),
+            //   onPressed: () {/** */},
+            // ),
+            CupertinoActionSheetAction(
+              child: Text(
+                'Actualizar ahora',
+                style: textos(
+                  ctn: context,
+                  fSize: 16,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context, true);
+                if (Platform.isIOS) {
+                  //  launchURL(destino: UtilsModel.instance.urlIos);
+                } else if (Platform.isAndroid) {
+                  // onClickInstallApk(
+                  //     "https://codikasensorsstorage.blob.core.windows.net/apkproveedores/app-debug.apk");
+                  // launchURL(destino: "");
+                }
+              },
+            ),
+            // CupertinoActionSheetAction(
+            //   child: Text(
+            //     'Posponer',
+            //     style: textos(
+            //       ctn: context,
+            //       fSize: 16,
+            //     ),
+            //   ),
+            //   onPressed: () => Navigator.pop(context,false),
+            // ),
+          ],
+        ));
+    return await showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => dialogWithImage);
   }
 }
 

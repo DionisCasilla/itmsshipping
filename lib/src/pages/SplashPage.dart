@@ -6,6 +6,7 @@ import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/pages/homePage.dart';
 import 'package:openseasapp/src/setup/setup.dart';
 import 'package:openseasapp/src/widgets/updateApp.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/appImages.dart';
@@ -43,7 +44,7 @@ class _SplashAppPageState extends State<SplashAppPage> {
     return Scaffold(
       body: Center(
         child: ZoomIn(
-          delay: const Duration(seconds: 6),
+          //delay: const Duration(seconds: 6),
           child: Image.asset(
             AppImages.openseasIco,
             width: widthheight(ctn: context, fSize: 260),
@@ -56,19 +57,28 @@ class _SplashAppPageState extends State<SplashAppPage> {
   }
 
   getInitData() async {
-    await Future.delayed(Duration.zero, () => _actualizar());
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    Future.delayed(
-        const Duration(seconds: 7),
-        () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            ));
-    // await Provider.of<AppBloc>(context, listen: false).getIniInfo();
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    final _version = double.tryParse("$version");
+    await Provider.of<AppBloc>(context, listen: false).getIniInfo();
+
+    print(Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion);
+    if (_version! < Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion) {
+      await Future.delayed(Duration.zero, () => _actualizar());
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 
   Future<void> _actualizar() async {
-    final res = true; // await GlobalHelpper().(context);
+    final res = await GlobalHelpper().updateAPP(context);
 
     //  print(res);
     if (res) {

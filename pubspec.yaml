@@ -58,6 +58,7 @@ dependencies:
   dropdown_search: ^2.0.1
   checkbox_grouped: ^1.8.0
   permission_handler: ^9.2.0
+  package_info_plus: ^1.4.2
 
 dev_dependencies:
   flutter_test:

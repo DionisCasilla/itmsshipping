@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ResultAppLogin {
   ResultAppLogin._privateConstructor();
 
@@ -27,17 +29,18 @@ class ResultAppLogin {
 }
 
 class Config {
-  Config({
-    this.btnshippingform = false,
-    this.active = false,
-  });
+  Config({this.btnshippingform = false, this.active = false, this.appversion = 1, this.urldonwload = ""});
 
   bool btnshippingform;
   bool active;
+  double appversion;
+  String urldonwload;
 
   factory Config.fromJson(Map<String, dynamic> json) => Config(
         btnshippingform: json["btnshippingform"] ?? false,
         active: json["active"] ?? false,
+        appversion: double.tryParse(json["appversion"]) ?? 1,
+        urldonwload: json["urldonwload"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
