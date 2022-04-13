@@ -291,7 +291,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                     _controller.clear();
                   });
                 },
-                child: Text("Sender Form", style: textos(ctn: context, fontWeight: FontWeight.w700, fontFamily: "Poppins", customcolor: Colors.white)),
+                child: Text("Send Form", style: textos(ctn: context, fontWeight: FontWeight.w700, fontFamily: "Poppins", customcolor: Colors.white)),
               ),
             ),
             const SizedBox(
