@@ -265,6 +265,10 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   final _infoPost = {"FormID": form.formId, "UserID": UserModel.instance.userId, "SignName": form.recieverName, "SignUrl": _url};
                   final resp = await _appProvider.saveForm(infoPost: _infoPost);
                   //print(resp);
+                  if (resp.success) {
+                    GlobalHelpper().printReciver(datos: resp.result);
+                  }
+
                   _alerta.disspose();
 
                   final _alerta2 = Alertas(titulo: resp.message, ctn: context, tipo: resp.success ? 2 : 3);

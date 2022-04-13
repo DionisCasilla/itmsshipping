@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:install_plugin_v2/install_plugin_v2.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
+import 'package:openseasapp/src/constants/colors.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,6 +26,7 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      
         insetPadding: EdgeInsets.only(
             top: widthheight(ctn: context, fSize: 12), left: widthheight(ctn: context, fSize: 16), right: widthheight(ctn: context, fSize: 16), bottom: widthheight(ctn: context, fSize: 0)),
         backgroundColor: Colors.white, //Color.fromRGBO(255, 255, 255, 0.35),
@@ -35,7 +37,7 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
             children: <Widget>[
               Text(
                 'Descargado ${download.toInt()}%',
-                style: textos(ctn: context, fSize: 16),
+                style: textos(ctn: context, fSize: 16, customcolor: color050855),
               ),
               LinearProgressIndicator(
                 value: download / 100,

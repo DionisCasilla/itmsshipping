@@ -69,7 +69,7 @@ class _MyStepProgressState extends State<MyStepProgress> {
                     left: widget._curStep > 0 ? 0.0 : widthheight(ctn: context, fSize: 50),
                     right: widthheight(ctn: context, fSize: 24.0),
                   ),
-                  height: widthheight(ctn: context, fSize: 82),
+                  height: widthheight(ctn: context, fSize: 90),
                   color: color050855,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -95,25 +95,25 @@ class _MyStepProgressState extends State<MyStepProgress> {
               ),
             ),
 
-            Positioned(
-              top: widthheight(ctn: context, fSize: 80),
-              left: 0,
-              right: 0,
-              child: Container(
-                  padding: EdgeInsets.only(
-                    //top: 20,
-                    left: widthheight(ctn: context, fSize: 10),
-                    right: widthheight(ctn: context, fSize: 10),
-                  ),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  color: color050855,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _subtitleViews(),
-                  )),
-            ),
+            // Positioned(
+            //   top: widthheight(ctn: context, fSize: 80),
+            //   left: 0,
+            //   right: 0,
+            //   child: Container(
+            //       padding: EdgeInsets.only(
+            //         //top: 20,
+            //         left: widthheight(ctn: context, fSize: 10),
+            //         right: widthheight(ctn: context, fSize: 10),
+            //       ),
+            //       width: double.infinity,
+            //       height: MediaQuery.of(context).size.height * 0.06,
+            //       color: color050855,
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: _subtitleViews(),
+            //       )),
+            // ),
 
             Padding(
               padding: EdgeInsets.only(top: widthheight(ctn: context, fSize: 140, tipo: 2)),

@@ -1,17 +1,25 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
+import 'package:openseasapp/src/models/formsavemode.dart';
+import 'package:openseasapp/src/models/saveFormModel.dart';
 import 'package:openseasapp/src/widgets/ddlIpotecca.dart';
 import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
 import 'package:checkbox_grouped/checkbox_grouped.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
+import '../constants/appImages.dart';
 import '../constants/colors.dart';
 import '../widgets/txtG.dart';
+import 'package:image/image.dart' as Imag;
 
 class GlobalHelpper {
   String _mindatetime = '${DateTime.now().year - 100}-01-01';
@@ -424,6 +432,142 @@ class GlobalHelpper {
           ],
         ));
     return await showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => dialogWithImage);
+  }
+
+  Future<void> connect() async {
+    // setState(() {
+    //   _connceting = true;
+    // });
+    final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
+
+    final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: listResult[0].macAdress);
+  }
+
+  Future<List<int>> receiptSaveForm({required PaperSize paper, required CapabilityProfile profile, required SaveFormModel datos}) async {
+    final Generator ticket = Generator(paper, profile);
+    List<int> bytes = [];
+    final now = DateTime.now();
+    final formatter = DateFormat('MM/dd/yyyy H:m');
+    final String timestamp = formatter.format(now);
+
+    // Print image
+    final ByteData data = await rootBundle.load(AppImages.openseasIco);
+    final Uint8List imgBytes = data.buffer.asUint8List();
+    final image = Imag.decodeImage(imgBytes);
+    // final imagefirma = Imag.decodeImage(imgBytes);
+    bytes += ticket.image(image!);
+
+    Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteEntregadoFirma.toString())).buffer.asUint8List();
+    final imagefirma = Imag.decodeImage(bytes2);
+
+    bytes += ticket.text(datos.empresa!.interTexto,
+        styles: const PosStyles(
+          align: PosAlign.center,
+          height: PosTextSize.size3,
+          width: PosTextSize.size3,
+        ),
+        linesAfter: 1);
+
+    bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.center));
+
+    bytes += ticket.hr();
+    bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.hr();
+
+    bytes += ticket.row([
+      PosColumn(text: "VOUCHER NO.", width: 5),
+      PosColumn(text: datos.ordenInfo!.trackPaqueteId.toString(), width: 7, styles: const PosStyles(bold: true)),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "DATE", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteEntregadoFecha.toString(), width: 7),
+    ]);
+    bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.hr();
+    bytes += ticket.image(imagefirma!);
+    bytes += ticket.hr(ch: '=');
+    bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
+    bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.cut();
+    return bytes;
+  }
+
+  Future<List<int>> receiptNewForm({required PaperSize paper, required CapabilityProfile profile, required SaveFormModel2 datos}) async {
+    final Generator ticket = Generator(paper, profile);
+    List<int> bytes = [];
+    final now = DateTime.now();
+    final formatter = DateFormat('MM/dd/yyyy H:m');
+    final String timestamp = formatter.format(now);
+
+    // Print image
+    final ByteData data = await rootBundle.load(AppImages.openseasIco);
+    final Uint8List imgBytes = data.buffer.asUint8List();
+    final image = Imag.decodeImage(imgBytes);
+    // final imagefirma = Imag.decodeImage(imgBytes);
+    bytes += ticket.image(image!);
+
+    // Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteEntregadoFirma.toString())).buffer.asUint8List();
+    // final imagefirma = Imag.decodeImage(bytes2);
+
+    bytes += ticket.text(datos.empresa!.interTexto,
+        styles: const PosStyles(
+          align: PosAlign.center,
+          height: PosTextSize.size3,
+          width: PosTextSize.size3,
+        ),
+        linesAfter: 1);
+
+    bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.center));
+
+    // bytes += ticket.hr();
+    // bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.hr();
+
+    bytes += ticket.row([
+      PosColumn(text: "VOUCHER NO.", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteId.toString(), width: 7, styles: const PosStyles(bold: true)),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "Destination", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteSenderDireccion.toString(), width: 7),
+    ]);
+    // bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString().replaceAll("|", ","), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.hr();
+    // bytes += ticket.image(imagefirma!);
+    bytes += ticket.hr(ch: '=');
+    bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
+    bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.cut();
+    return bytes;
+  }
+
+  Future<void> printReciver({
+    SaveFormModel? datos,
+    SaveFormModel2? datos2,
+    int tipo = 0,
+  }) async {
+    final bool result = await PrintBluetoothThermal.bluetoothEnabled;
+    int conecctionStatus2 = await PrintBluetoothThermal.batteryLevel;
+    bool conecctionStatus = await PrintBluetoothThermal.connectionStatus;
+
+    if (conecctionStatus) {
+      const PaperSize paper = PaperSize.mm58;
+      final profile = await CapabilityProfile.load();
+
+      await PrintBluetoothThermal.writeBytes(tipo == 0 ? await receiptSaveForm(paper: paper, profile: profile, datos: datos!) : await receiptNewForm(paper: paper, profile: profile, datos: datos2!));
+    }
   }
 }
 

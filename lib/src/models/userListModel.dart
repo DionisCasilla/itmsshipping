@@ -38,18 +38,21 @@ class UserModel {
     required this.userId,
     required this.userName,
     required this.userRole,
+    this.keyRequered = false,
   });
 
   String interId = "";
   String userId = "";
   String userName = "";
   String userRole = "";
+  bool keyRequered = false;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         interId: json["InterID"] ?? "",
         userId: json["UserID"] ?? "",
         userName: json["UserName"] ?? "",
         userRole: json["UserRole"] ?? "",
+        keyRequered: json["KeyRequered"] == "true" ? true : false,
       );
 
   Map<String, dynamic> toJson() => {

@@ -56,17 +56,17 @@ class Empresa {
   String empresaName = "";
 
   factory Empresa.fromJson(Map<String, dynamic> json) => Empresa(
-        interId: json["InterID"],
-        masterInterId: json["MasterInterID"],
-        interTexto: json["InterTexto"],
-        interCodigoId: json["InterCodigoID"],
-        interDireccion: json["InterDireccion"],
-        interWebSite: json["InterWebSite"],
-        interEmail: json["InterEmail"],
-        interTelefono: json["InterTelefono"],
-        logoUrl: json["LogoUrl"],
-        colorEmpresa: json["ColorEmpresa"],
-        empresaName: json["EmpresaName"],
+        interId: json["InterID"] ?? "",
+        masterInterId: json["MasterInterID"] ?? "",
+        interTexto: json["InterTexto"] ?? "",
+        interCodigoId: json["InterCodigoID"] ?? "",
+        interDireccion: json["InterDireccion"] ?? "",
+        interWebSite: json["InterWebSite"] ?? "",
+        interEmail: json["InterEmail"] ?? "",
+        interTelefono: json["InterTelefono"] ?? "",
+        logoUrl: json["LogoUrl"] ?? "",
+        colorEmpresa: json["ColorEmpresa"] ?? "",
+        empresaName: json["EmpresaName"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {

@@ -20,7 +20,7 @@ import '../models/saveFormModel.dart';
 
 class AppProvider {
   Future<GenericResponse> loginApp({String interID = 'OPENSEASSHIPPING'}) async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
@@ -38,23 +38,21 @@ class AppProvider {
 
       final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? ResultAppLogin.fromJson(decodedata["result"]) : null);
 
-      print(decodedata);
+      // print(decodedata);
       ResultAppLogin.instance.token = respuesta.result.token;
       return respuesta;
       // return listDocumentType;
     } catch (e) {
-      print(e);
+      // print(e);
       return GenericResponse(message: e.toString(), success: false);
     }
   }
 
   Future<List<UserModel>> listUser() async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
-      print(ResultAppLogin.instance.token);
-      // print(json.encode(userModel.toJson()));
       final url = Uri.parse(_baseUrl + "itmsshipping/userlist");
       final response = await http.get(
         url,
@@ -71,17 +69,41 @@ class AppProvider {
       return respuesta;
       // return listDocumentType;
     } catch (e) {
-      print(e);
+      //  print(e);
       return [];
     }
   }
 
-  Future<List<FormDataResult>> findFom({required String formId, String type = ""}) async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+  Future<GenericResponse> userkeyValidate({required String userkey}) async {
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
-      print(ResultAppLogin.instance.token);
+      //  print(ResultAppLogin.instance.token);
+      // print(json.encode(userModel.toJson()));
+      final url = Uri.parse(_baseUrl + "itmsshipping/userkeyvalidate/$userkey");
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},
+      ).timeout(const Duration(minutes: 1));
+
+      final decodedata = json.decode(response.body);
+
+      final respuesta = GenericResponse.fromJson(decodedata, null);
+
+      return respuesta;
+      // return listDocumentType;
+    } catch (e) {
+      return GenericResponse(message: e.toString(), success: false);
+    }
+  }
+
+  Future<List<FormDataResult>> findFom({required String formId, String type = ""}) async {
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
+    // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
+
+    try {
+      //  print(ResultAppLogin.instance.token);
       // print(json.encode(userModel.toJson()));
       final url = Uri.parse(_baseUrl + "itmsshipping/findForm/$formId/$type");
       final response = await http.get(
@@ -105,7 +127,7 @@ class AppProvider {
   }
 
   Future<GenericResponse> saveForm({required Map infoPost}) async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
@@ -130,7 +152,7 @@ class AppProvider {
   }
 
   Future<List<ResultData>> newForm() async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
@@ -158,7 +180,7 @@ class AppProvider {
   }
 
   Future<GenericResponse> saveNewForm({required Map datos}) async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
@@ -175,7 +197,7 @@ class AppProvider {
 
       final decodedata = json.decode(response.body);
 
-      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? FormSavingModel.fromJson(decodedata["result"]) : null);
+      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? SaveFormModel2.fromJson(decodedata["result"]) : null);
 
       return respuesta;
       // List<ResultData> respuesta = [];
@@ -190,7 +212,7 @@ class AppProvider {
   }
 
   Future<String> uploadImage({required File image, required String guid}) async {
-    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlPro : Endpoint.baseUrlDev;
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
 
     final _cloudinary = Cloudinary("776156192642265", "i7GkyXZH6dp2LVb3ztBmsMIqtHE", "dfbwtygxk");
     final response = await _cloudinary.uploadFile(

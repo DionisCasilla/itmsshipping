@@ -184,7 +184,7 @@ class _NewFormPageState extends State<NewFormPage> {
       });
     }
 
-    print(datos);
+    // print(datos);
 
     //var json = jsonEncode(datos);
     // print(json);
@@ -196,7 +196,10 @@ class _NewFormPageState extends State<NewFormPage> {
     _alerta2.showAlert();
 
     await Future.delayed(const Duration(seconds: 3));
-    if (_response.success) {}
+    if (_response.success) {
+      GlobalHelpper().printReciver(tipo: 1, datos2: _response.result);
+      Navigator.pop(context);
+    }
 
     _alerta2.disspose();
   }

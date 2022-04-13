@@ -79,14 +79,18 @@ class HomePage extends StatelessWidget {
                                 onTap: () {
                                   // _router.navigateTo(context, "/operation", transition: TransitionType.inFromLeft);
                                   // Navigator.push(context, FadeRoute(page: const SelectOperationPage()));
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => SelectOperationPage()),
-                                  );
+                                  if (user.keyRequered) {
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => SelectOperationPage()),
+                                    );
 
-                                  UserModel.instance.interId = user.interId;
-                                  UserModel.instance.userId = user.userId;
-                                  UserModel.instance.userName = user.userName;
+                                    UserModel.instance.interId = user.interId;
+                                    UserModel.instance.userId = user.userId;
+                                    UserModel.instance.userName = user.userName;
+                                  }
+
                                   // Navigator.pushNamed(context, '/operation');
                                 },
                                 username: user.userName,

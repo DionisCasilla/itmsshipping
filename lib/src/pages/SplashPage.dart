@@ -20,15 +20,13 @@ class SplashAppPage extends StatefulWidget {
 
 class _SplashAppPageState extends State<SplashAppPage> {
   late AnimationController animateController;
+  final _appBloc = AppBloc();
   final _router = FluroRouter();
 
   @override
   void initState() {
     // TODO: implement initState
-    // animateController.addListener(() {
-    //   print("object");
-    //   if (animateController.isCompleted) {}
-    // });
+    AppBloc();
     super.initState();
 
     // Navigator.pushReplacement(
@@ -41,15 +39,18 @@ class _SplashAppPageState extends State<SplashAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ZoomIn(
-          //delay: const Duration(seconds: 6),
-          child: Image.asset(
-            AppImages.openseasIco,
-            width: widthheight(ctn: context, fSize: 260),
-            // height: widthheight(ctn: context, fSize: 660, tipo: 2),
-            fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Center(
+          child: ZoomIn(
+            //delay: const Duration(seconds: 6),
+            child: Image.asset(
+              AppImages.openseasIco,
+              width: widthheight(ctn: context, fSize: 260),
+              // height: widthheight(ctn: context, fSize: 660, tipo: 2),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
@@ -58,16 +59,15 @@ class _SplashAppPageState extends State<SplashAppPage> {
 
   getInitData() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String appName = packageInfo.appName;
-    String packageName = packageInfo.packageName;
-    String version = packageInfo.version;
+    await _appBloc.getIniInfo();
+    //String appName = packageInfo.appName;
+    //  String packageName = packageInfo.packageName;
+    // String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
-    final _version = double.tryParse("$version");
-    await Provider.of<AppBloc>(context, listen: false).getIniInfo();
+    final _version = int.tryParse(buildNumber);
+    // await Provider.of<AppBloc>(context, listen: false).getIniInfo();
 
-    print(Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion);
-    if (_version! < Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion) {
+    if (Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion > _version!) {
       await Future.delayed(Duration.zero, () => _actualizar());
     }
 

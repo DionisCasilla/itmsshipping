@@ -8,6 +8,81 @@ FormSavingModel formSavingModelFromJson(String str) => FormSavingModel.fromJson(
 
 String formSavingModelToJson(FormSavingModel data) => json.encode(data.toJson());
 
+class SaveFormModel2 {
+  SaveFormModel2({
+    this.empresa,
+    this.ordenInfo,
+  });
+
+  Empresa? empresa;
+  FormSavingModel? ordenInfo;
+
+  factory SaveFormModel2.fromJson(Map<String, dynamic> json) => SaveFormModel2(
+        empresa: json["empresa"] == null ? null : Empresa.fromJson(json["empresa"]),
+        ordenInfo: json["ordenInfo"] == null ? null : FormSavingModel.fromJson(json["ordenInfo"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "empresa": empresa == null ? null : empresa!.toJson(),
+        "ordenInfo": ordenInfo == null ? null : ordenInfo!.toJson(),
+      };
+}
+
+class Empresa {
+  Empresa({
+    this.interId = "",
+    this.masterInterId = "",
+    this.interTexto = "",
+    this.interCodigoId = "",
+    this.interDireccion = "",
+    this.interWebSite = "",
+    this.interEmail = "",
+    this.interTelefono = "",
+    this.logoUrl = "",
+    this.colorEmpresa = "",
+    this.empresaName = "",
+  });
+
+  String interId = "";
+  String masterInterId = "";
+  String interTexto = "";
+  String interCodigoId = "";
+  String interDireccion = "";
+  String interWebSite = "";
+  String interEmail = "";
+  String interTelefono = "";
+  String logoUrl = "";
+  String colorEmpresa = "";
+  String empresaName = "";
+
+  factory Empresa.fromJson(Map<String, dynamic> json) => Empresa(
+        interId: json["InterID"] ?? "",
+        masterInterId: json["MasterInterID"] ?? "",
+        interTexto: json["InterTexto"] ?? "",
+        interCodigoId: json["InterCodigoID"] ?? "",
+        interDireccion: json["InterDireccion"] ?? "",
+        interWebSite: json["InterWebSite"] ?? "",
+        interEmail: json["InterEmail"] ?? "",
+        interTelefono: json["InterTelefono"] ?? "",
+        logoUrl: json["LogoUrl"] ?? "",
+        colorEmpresa: json["ColorEmpresa"] ?? "",
+        empresaName: json["EmpresaName"] ?? "",
+      );
+
+  Map<String, dynamic> toJson() => {
+        "InterID": interId,
+        "MasterInterID": masterInterId,
+        "InterTexto": interTexto,
+        "InterCodigoID": interCodigoId,
+        "InterDireccion": interDireccion,
+        "InterWebSite": interWebSite,
+        "InterEmail": interEmail,
+        "InterTelefono": interTelefono,
+        "LogoUrl": logoUrl,
+        "ColorEmpresa": colorEmpresa,
+      };
+}
+
 class FormSavingModel {
   FormSavingModel({
     required this.interId,

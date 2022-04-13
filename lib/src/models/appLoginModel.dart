@@ -15,7 +15,7 @@ class ResultAppLogin {
   });
 
   Config? config;
-  String token = "";
+  String? token = "";
 
   factory ResultAppLogin.fromJson(Map<String, dynamic> json) => ResultAppLogin(
         config: json["config"] == null ? null : Config.fromJson(json["config"]),
@@ -31,15 +31,15 @@ class ResultAppLogin {
 class Config {
   Config({this.btnshippingform = false, this.active = false, this.appversion = 1, this.urldonwload = ""});
 
-  bool btnshippingform;
-  bool active;
-  double appversion;
+  bool btnshippingform = false;
+  bool active = false;
+  int appversion;
   String urldonwload;
 
   factory Config.fromJson(Map<String, dynamic> json) => Config(
         btnshippingform: json["btnshippingform"] ?? false,
         active: json["active"] ?? false,
-        appversion: double.tryParse(json["appversion"]) ?? 1,
+        appversion: json["appversion"] ?? 1,
         urldonwload: json["urldonwload"] ?? "",
       );
 
