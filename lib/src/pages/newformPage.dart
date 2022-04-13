@@ -57,7 +57,7 @@ class _NewFormPageState extends State<NewFormPage> {
                 children: _frm2,
               ),
               BtnIpotecca(
-                label: "Next",
+                label: form.code == "4" ? "Send Form" : "Next",
                 onPressed: _clickSiguiente,
                 tipoBtn: 1,
                 borderR: true,
