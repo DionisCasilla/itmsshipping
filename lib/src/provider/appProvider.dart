@@ -103,8 +103,6 @@ class AppProvider {
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
-      //  print(ResultAppLogin.instance.token);
-      // print(json.encode(userModel.toJson()));
       final url = Uri.parse(_baseUrl + "itmsshipping/findForm/$formId/$type");
       final response = await http.get(
         url,

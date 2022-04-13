@@ -246,7 +246,7 @@ class GlobalHelpper {
               values: _valores,
               itemTitle: _valores,
               onItemSelected: (a) {
-                print(a);
+                //  print(a);
                 final _a = a as List<String>;
 
                 selectData!(_a.join("|"));
@@ -269,6 +269,10 @@ class GlobalHelpper {
             FocusScope.of(ctn).requestFocus(FocusNode());
           },
           child: TxtG(
+            txtonTap: () async {
+              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1);
+              FocusScope.of(ctn).requestFocus(FocusNode());
+            },
             id: elemento.id,
             lineOnText: 1,
             label: elemento.description,
@@ -292,6 +296,10 @@ class GlobalHelpper {
             isReadOnly: true,
             // textInputType: TextInputType.number,
             controller: textEditingController,
+            txtonTap: () async {
+              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1, fORMATDATE: "yyyy");
+              FocusScope.of(ctn).requestFocus(FocusNode());
+            },
             // onChangedText: (String s) => elemento.selectData(s),
           ),
         );
@@ -309,6 +317,10 @@ class GlobalHelpper {
             isReadOnly: true,
             // textInputType: TextInputType.number,
             controller: textEditingController,
+            txtonTap: () async {
+              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1, fORMATDATE: "hh:mm");
+              FocusScope.of(ctn).requestFocus(FocusNode());
+            },
             // onChangedText: (String s) => elemento.selectData(s),
           ),
         );
@@ -326,6 +338,10 @@ class GlobalHelpper {
             isReadOnly: true,
             // textInputType: TextInputType.number,
             controller: textEditingController,
+            txtonTap: () async {
+              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1, fORMATDATE: "dd/MM/yyy hh:mm");
+              FocusScope.of(ctn).requestFocus(FocusNode());
+            },
             // onChangedText: (String s) => elemento.selectData(s),
           ),
         );
@@ -338,8 +354,6 @@ class GlobalHelpper {
         _valores.map((list) {
           _elementosLista.add(DDLIpItems(id: list, descripcion: list));
         }).toList();
-
-//        print(_elementosLista);
 
         _elementos = DDLIp(
             id: elemento.id,

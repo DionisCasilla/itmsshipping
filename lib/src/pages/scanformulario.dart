@@ -84,8 +84,11 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
               label: "Scan Form Number",
               hintText: "Scan Form Number",
               prefixIconF: FeatherIcons.camera,
-              prefixIconClick: () => scanQR(),
+              prefixIconClick: () async => await scanQR(tipo: 0),
               textInputType: TextInputType.number,
+              textInputAction: TextInputAction.go,
+              onSubmitted: (String e) async => await scanQR(tipo: 1),
+
               // isObscureText: true,
             ),
             SizedBox(
@@ -153,18 +156,22 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
     );
   }
 
-  Future<void> scanQR() async {
-    String barcodeScanRes;
+  Future<void> scanQR({int tipo = 0}) async {
+    String barcodeScanRes = "";
     // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode("#FF3BC1D3", "Cancel", true, ScanMode.BARCODE);
+    if (tipo == 0) {
+      try {
+        barcodeScanRes = await FlutterBarcodeScanner.scanBarcode("#FF3BC1D3", "Cancel", true, ScanMode.BARCODE);
 
-      if (barcodeScanRes == "-1") return;
-      // print(barcodeScanRes);
+        if (barcodeScanRes == "-1") return;
+        // print(barcodeScanRes);
 
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
+      } on PlatformException {
+        barcodeScanRes = 'Failed to get platform version.';
+      }
+      scanBarcode = barcodeScanRes;
+      _barcodeController.text = scanBarcode;
+    } else {}
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -172,9 +179,8 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
     if (!mounted) return;
     _formularios.clear();
     //  setState(() {
-    scanBarcode = barcodeScanRes;
-    _barcodeController.text = scanBarcode;
-    findForm(formId: scanBarcode, type: "1");
+
+    findForm(formId: _barcodeController.text, type: tipo.toString());
     // });
   }
 
@@ -212,10 +218,13 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
         txtGeneric(texto: "Amount: ", texto2: " ${form.currencyId}${form.invoiceValue}"),
         Padding(
           padding: const EdgeInsets.only(right: 24),
-          child: Signature(
-            controller: _controller,
-            height: widthheight(ctn: context, fSize: 180),
-            backgroundColor: Colors.white70,
+          child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+            child: Signature(
+              controller: _controller,
+              height: widthheight(ctn: context, fSize: 180),
+              backgroundColor: Colors.white70,
+            ),
           ),
         ),
         Row(
@@ -251,7 +260,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   primary: Colors.green,
                   // minimumSize: const Size(88, 36),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  shape: RoundedRectangleBorder(borderRadius: const BorderRadius.all(Radius.circular(80))),
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(80))),
                 ),
                 onPressed: () async {
                   final _alerta = Alertas(titulo: "Saving", ctn: context);

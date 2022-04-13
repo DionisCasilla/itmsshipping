@@ -27,6 +27,8 @@ class TxtG extends StatelessWidget {
   double? suffixIconFZise;
   Color colorIcon;
   VoidCallback? prefixIconClick;
+  TextInputAction textInputAction;
+  Function? onSubmitted;
 
   TxtG(
       {Key? key,
@@ -49,6 +51,8 @@ class TxtG extends StatelessWidget {
       this.suffixIconFZise = 20,
       this.suffixIconF,
       this.prefixIconClick,
+      this.onSubmitted,
+      this.textInputAction = TextInputAction.go,
       this.onclickTap})
       : super(key: key);
 
@@ -100,6 +104,9 @@ class TxtG extends StatelessWidget {
                 prefixIconF: prefixIconF,
                 prefixIconFZise: prefixIconFZise!,
                 prefixIconClick: prefixIconClick,
+                onSubmitted: onSubmitted,
+                textInputAction: textInputAction,
+
                 // isFillColor: false,
               ),
             )
@@ -207,7 +214,7 @@ class _TxtGenericState extends State<TxtGeneric> {
                     onTap: widget.txtonTap,
                     style: textos(ctn: context, fSize: 16, customcolor: color050855),
                     obscureText: widget.isObscureText ?? false,
-                    onSubmitted: (as) => widget.onSubmitted,
+                    onSubmitted: (as) => widget.onSubmitted!(),
                   )
                   // focusNode: widget.txtfocusNode),
                   );
@@ -231,7 +238,7 @@ class _TxtGenericState extends State<TxtGeneric> {
                 style: textos(ctn: context, fSize: 16, customcolor: color050855),
                 onTap: widget.txtonTap!,
                 onChanged: (as) => widget.onChangedText,
-                onSubmitted: (a) => widget.onSubmitted ?? () {},
+                onSubmitted: (String a) => widget.onSubmitted!(a),
               ),
             ),
           );
