@@ -10,6 +10,7 @@ import 'package:openseasapp/src/widgets/btnIpoteca.dart';
 import 'package:openseasapp/src/widgets/customStepper/my_StepProgress.dart';
 import 'package:openseasapp/src/widgets/customStepper/stepper_Model.dart';
 import 'package:provider/provider.dart';
+import 'package:signature/signature.dart';
 
 import '../constants/appImages.dart';
 import '../constants/colors.dart';
@@ -121,13 +122,6 @@ class _NewFormPageState extends State<NewFormPage> {
     );
   }
 
-  // List<StepperModel> mySteps() {
-  //   final _listItems = Provider.of<AppBloc>(context, listen: false).newform;
-  //   _steps = _listItems.map((form) => StepperModel(titulo: form.description, contenido: Container())).toList();
-
-  //   return _steps;
-  // }
-
   _clickSiguiente() async {
     // Vibrate.feedback(FeedbackType.impact);
     final formCurrent = _frm1[_curStep];
@@ -157,14 +151,6 @@ class _NewFormPageState extends State<NewFormPage> {
       });
     } else {
       await _saveform();
-      //_curStep = 0;
-      // Navigator.pushReplacement(
-      //     context,
-      //     FadeRoute(
-      //         page: HomePage(
-      //       selectMenu: "Citas",
-      //       selectMenuId: 4,
-      //     )));
     }
 
     _pageController.animateToPage(_curStep, duration: const Duration(milliseconds: 400), curve: Curves.linearToEaseOut);
@@ -220,6 +206,8 @@ class NewFomrToSave {
 class Formulario extends StatelessWidget {
   InformationModel information;
   final textEditingController = TextEditingController();
+  final signatureController = SignatureController();
+
   String selectData = "";
   String id = "";
   String type = "";

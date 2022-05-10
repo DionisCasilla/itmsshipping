@@ -15,6 +15,7 @@ import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
 import 'package:checkbox_grouped/checkbox_grouped.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:signature/signature.dart';
 
 import '../constants/appImages.dart';
 import '../constants/colors.dart';
@@ -178,7 +179,13 @@ class GlobalHelpper {
     return path;
   }
 
-  Widget generarField({required BuildContext ctn, required dynamic elemento, TextEditingController? textEditingController, Function? selectData, GroupController? controller}) {
+  Widget generarField(
+      {required BuildContext ctn,
+      required dynamic elemento,
+      TextEditingController? textEditingController,
+      Function? selectData,
+      GroupController? controller,
+      SignatureController? signatureController}) {
     Widget _elementos = SizedBox();
 
     switch (elemento.type) {
@@ -263,14 +270,15 @@ class GlobalHelpper {
 
         break;
       case "DATE":
+        final _tipo = elemento.values == "0" ? 0 : 1;
         _elementos = InkWell(
           onTap: () async {
-            await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1);
+            await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: _tipo);
             FocusScope.of(ctn).requestFocus(FocusNode());
           },
           child: TxtG(
             txtonTap: () async {
-              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: 1);
+              await GlobalHelpper().seleccionFecha(context: ctn, txtController: textEditingController, tipo: _tipo);
               FocusScope.of(ctn).requestFocus(FocusNode());
             },
             id: elemento.id,
@@ -374,6 +382,48 @@ class GlobalHelpper {
             );
 
         break;
+      case "Signature":
+        _elementos = Column(children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: Container(
+              decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+              child: Signature(
+                controller: signatureController!,
+                height: widthheight(ctn: ctn, fSize: 180),
+                backgroundColor: Colors.white70,
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.undo),
+                color: color050855,
+                onPressed: () {
+                  // setState(() => signatureController.undo());
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.redo),
+                color: color050855,
+                onPressed: () {
+                  // setState(() => signatureController.redo());
+                },
+              ),
+              //CLEAR CANVAS
+              IconButton(
+                icon: const Icon(Icons.clear),
+                color: Colors.red,
+                onPressed: () {
+                  //  setState(() => signatureController.clear());
+                },
+              ),
+            ],
+          )
+        ]);
+        break;
+
       default:
     }
     return _elementos;
