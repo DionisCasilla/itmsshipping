@@ -74,18 +74,18 @@ class ResultFormPending {
       );
 
   Map<String, dynamic> toJson() => {
-        "InterID": interId ?? null,
-        "FormID": formId ?? null,
-        "FormNumber": formNumber ?? null,
-        "SenderName": senderName ?? null,
-        "RecieverName": recieverName ?? null,
-        "RecieverAddress": recieverAddress ?? null,
-        "RecieverCity": recieverCity ?? null,
-        "RecieverPhone": recieverPhone ?? null,
-        "PackageType": packageType ?? null,
-        "PackageContent": packageContent ?? null,
-        "CurrencyID": currencyId ?? null,
-        "InvoiceValue": invoiceValue ?? null,
-        "ReicipitUrl": reicipitUrl ?? null,
+        "InterID": interId,
+        "FormID": formId,
+        "FormNumber": formNumber,
+        "SenderName": senderName,
+        "RecieverName": recieverName,
+        "RecieverAddress": recieverAddress,
+        "RecieverCity": recieverCity,
+        "RecieverPhone": recieverPhone,
+        "PackageType": packageType,
+        "PackageContent": packageContent,
+        "CurrencyID": currencyId,
+        "InvoiceValue": invoiceValue,
+        "ReicipitUrl": reicipitUrl,
       };
 }
