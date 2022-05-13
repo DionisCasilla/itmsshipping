@@ -26,7 +26,6 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      
         insetPadding: EdgeInsets.only(
             top: widthheight(ctn: context, fSize: 12), left: widthheight(ctn: context, fSize: 16), right: widthheight(ctn: context, fSize: 16), bottom: widthheight(ctn: context, fSize: 0)),
         backgroundColor: Colors.white, //Color.fromRGBO(255, 255, 255, 0.35),
@@ -92,7 +91,7 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
         Navigator.pop(context);
       }
     } catch (e) {
-      // print(e.toString());
+      print(e.toString());
       Navigator.pop(context);
     }
   }
