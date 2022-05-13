@@ -5,6 +5,7 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:openseasapp/src/bloc/appBloc.dart';
 
 import 'package:openseasapp/src/constants/appimages.dart';
 import 'package:openseasapp/src/constants/colors.dart';
@@ -12,9 +13,10 @@ import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/models/userListModel.dart';
 import 'package:openseasapp/src/provider/appProvider.dart';
-import 'package:openseasapp/src/widgets/btnIpoteca.dart';
+// import 'package:openseasapp/src/widgets/btnIpoteca.dart';
 import 'package:openseasapp/src/widgets/txtG.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
 import '../models/reciberForm.Model.dart';
@@ -42,6 +44,13 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
     // onDrawStart: () => print('onDrawStart called!'),
     // onDrawEnd: () => print('onDrawEnd called!'),
   );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<AppBloc>(context, listen: false).getFormPending();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +108,37 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
               child: Visibility(
                   visible: _mostrar,
                   child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: _formularios.map((e) => formulario(form: e)).toList())),
+            ),
+            Consumer<AppBloc>(
+              builder: (_, appBloc, __) {
+                if (appBloc.formPending.isEmpty) return const SizedBox();
+
+                return ListView.builder(
+                  itemCount: appBloc.formPending.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () async => await scanQR(tipo: 1),
+                      child: SizedBox(
+                        height: 100,
+                        child: ListTile(
+                          title: Column(
+                            children: [
+                              Text(
+                                appBloc.formPending[index].formNumber,
+                                style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
+                              ),
+                              Text(
+                                appBloc.formPending[index].senderName,
+                                style: textos(ctn: context, fSize: 14, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             )
           ],
         ),
@@ -191,16 +231,19 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
     final _alerta = Alertas(titulo: "Searching..", ctn: context);
     _alerta.showAlert();
     final _data = await _appProvider.findFom(formId: formId, type: type);
-    if (_data.isNotEmpty) {
+    _alerta.disspose();
+    if (_data.success) {
       _mostrar = true;
-      _formularios = _data;
+      _formularios = _data.result;
     } else {
       _mostrar = false;
+      final _alerta2 = Alertas(titulo: _data.message, ctn: context, tipo: _data.success ? 2 : 3);
+      _alerta2.showAlert();
+      await Future.delayed(const Duration(seconds: 3));
+      _alerta2.disspose();
     }
     setState(() {});
 //    print(_data);
-
-    _alerta.disspose();
   }
 
   Widget formulario({required FormDataResult form}) {
@@ -255,7 +298,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
               child: ElevatedButton(
                 autofocus: false,
                 style: ElevatedButton.styleFrom(
-                  animationDuration: Duration(seconds: 1),
+                  animationDuration: const Duration(seconds: 1),
                   onPrimary: Colors.green,
                   primary: Colors.green,
                   // minimumSize: const Size(88, 36),
@@ -275,7 +318,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   final resp = await _appProvider.saveForm(infoPost: _infoPost);
                   //print(resp);
                   if (resp.success) {
-                    GlobalHelpper().printReciver(datos: resp.result);
+                    await GlobalHelpper().printReciver(datos: resp.result);
                   }
 
                   _alerta.disspose();
@@ -312,7 +355,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
             texto,
             style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
           ),
-          Container(
+          SizedBox(
             width: widthheight(ctn: context, fSize: 200),
             child: Text(
               texto2,

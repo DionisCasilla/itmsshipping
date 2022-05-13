@@ -96,7 +96,7 @@ class SelectOperationPage extends StatelessWidget {
                 SizedBox(
                   height: widthheight(ctn: context, fSize: 6),
                 ),
-                //  btnAcciones(context: context, iconData: FeatherIcons.truck, label: "Printer", onClick: () async => printTest())
+                // btnAcciones(context: context, iconData: FeatherIcons.truck, label: "Printer", onClick: () async => printTest())
               ],
             ),
           ),

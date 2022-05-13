@@ -1,20 +1,23 @@
-import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
-import 'package:openseasapp/src/models/formsavemode.dart';
+
 import 'package:openseasapp/src/models/newformModel.dart';
 import 'package:openseasapp/src/provider/appProvider.dart';
 import 'package:openseasapp/src/widgets/btnIpoteca.dart';
 import 'package:openseasapp/src/widgets/customStepper/my_StepProgress.dart';
 import 'package:openseasapp/src/widgets/customStepper/stepper_Model.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
 import '../constants/appImages.dart';
 import '../constants/colors.dart';
 import '../helper/cresponsive.dart';
+import 'package:uuid/uuid.dart';
 
 class NewFormPage extends StatefulWidget {
   const NewFormPage({Key? key}) : super(key: key);
@@ -58,7 +61,7 @@ class _NewFormPageState extends State<NewFormPage> {
                 children: _frm2,
               ),
               BtnIpotecca(
-                label: form.code == "4" ? "Send Form" : "Next",
+                label: form.code == "04" ? "Send Form" : "Next",
                 onPressed: _clickSiguiente,
                 tipoBtn: 1,
                 borderR: true,
@@ -129,18 +132,23 @@ class _NewFormPageState extends State<NewFormPage> {
     print(formCurrent.id);
     List<String> cERROR = [];
 
-    formCurrent.formularios.forEach((campos) {
+    for (var campos in formCurrent.formularios) {
       if (campos.requered) {
         //  if (campos.information.description!.isNotEmpty ) loaninfo.informationValue = campos.information.description;
-        String valor = "${campos.textEditingController.text}${campos.selectData}";
-        if (valor.isEmpty) cERROR.add(campos.information.description.toString() + " is requered");
+        if (campos.type == "Signature") {
+          print(campos.signatureController.value.length);
+          if (campos.signatureController.value.isEmpty) cERROR.add(campos.information.description.toString() + " is requered");
+        } else {
+          String valor = "${campos.textEditingController.text}${campos.selectData}";
+          if (valor.isEmpty) cERROR.add(campos.information.description.toString() + " is requered");
+        }
       }
-    });
+    }
 
     if (cERROR.isNotEmpty) {
       final _alerta = Alertas(ctn: context, titulo: "Error", subtitulo: cERROR.join("\n"), barrierDismissible: false, tipo: 3);
       _alerta.showAlert();
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
       _alerta.disspose();
       return;
     }
@@ -164,10 +172,23 @@ class _NewFormPageState extends State<NewFormPage> {
     Map datos = {};
 
     for (var formGrupo in _frm1) {
-      formGrupo.formularios.forEach((element) {
-        String valor = "${element.textEditingController.text}${element.selectData}";
-        datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
-      });
+      for (var element in formGrupo.formularios) {
+        if (element.type == "Signature") {
+          var uuid = Uuid();
+          final _guid = uuid.v4();
+          final Uint8List? data = await element.signatureController.toPngBytes();
+          final tempDir = await getTemporaryDirectory();
+          File file = await File('${tempDir.path}/$_guid.jpeg').create();
+          file.writeAsBytesSync(data!);
+
+          final _url = await AppProvider().uploadImage(image: file, guid: _guid);
+          String valor = _url;
+          datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
+        } else {
+          String valor = "${element.textEditingController.text}${element.selectData}";
+          datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
+        }
+      }
     }
 
     // print(datos);
@@ -183,7 +204,7 @@ class _NewFormPageState extends State<NewFormPage> {
 
     await Future.delayed(const Duration(seconds: 3));
     if (_response.success) {
-      GlobalHelpper().printReciver(tipo: 1, datos2: _response.result);
+      await GlobalHelpper().printReciver(tipo: 1, datos2: _response.result);
       Navigator.pop(context);
     }
 
@@ -224,8 +245,9 @@ class Formulario extends StatelessWidget {
         ctn: context,
         elemento: information,
         textEditingController: textEditingController,
+        signatureController: signatureController,
         selectData: (String a) {
-          print(a);
+          // print(a);
           selectData = a;
         });
   }

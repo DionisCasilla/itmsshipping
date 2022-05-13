@@ -186,7 +186,7 @@ class GlobalHelpper {
       Function? selectData,
       GroupController? controller,
       SignatureController? signatureController}) {
-    Widget _elementos = SizedBox();
+    Widget _elementos = const SizedBox();
 
     switch (elemento.type) {
       case "STRING":
@@ -383,45 +383,54 @@ class GlobalHelpper {
 
         break;
       case "Signature":
-        _elementos = Column(children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: Container(
+        final _sig = SignatureController();
+        _elementos = Padding(
+          padding: EdgeInsets.only(right: widthheight(ctn: ctn, fSize: 40), left: widthheight(ctn: ctn, fSize: 40)),
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const SizedBox(height: 20),
+            Text(
+              elemento.description,
+              style: textos(ctn: ctn, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
+            ),
+            Container(
               decoration: BoxDecoration(border: Border.all(color: Colors.black)),
               child: Signature(
                 controller: signatureController!,
                 height: widthheight(ctn: ctn, fSize: 180),
+                width: widthheight(ctn: ctn, fSize: 300),
                 backgroundColor: Colors.white70,
               ),
             ),
-          ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.undo),
-                color: color050855,
-                onPressed: () {
-                  // setState(() => signatureController.undo());
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.redo),
-                color: color050855,
-                onPressed: () {
-                  // setState(() => signatureController.redo());
-                },
-              ),
-              //CLEAR CANVAS
-              IconButton(
-                icon: const Icon(Icons.clear),
-                color: Colors.red,
-                onPressed: () {
-                  //  setState(() => signatureController.clear());
-                },
-              ),
-            ],
-          )
-        ]);
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.undo),
+                  color: color050855,
+                  onPressed: () {
+                    signatureController.undo();
+                    // setState(() => signatureController.undo());
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.redo),
+                  color: color050855,
+                  onPressed: () {
+                    // setState(() => signatureController.redo());
+                    signatureController.redo();
+                  },
+                ),
+                //CLEAR CANVAS
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  color: Colors.red,
+                  onPressed: () {
+                    signatureController.clear();
+                  },
+                ),
+              ],
+            )
+          ]),
+        );
         break;
 
       default:
@@ -622,15 +631,21 @@ class GlobalHelpper {
     SaveFormModel2? datos2,
     int tipo = 0,
   }) async {
-    final bool result = await PrintBluetoothThermal.bluetoothEnabled;
-    int conecctionStatus2 = await PrintBluetoothThermal.batteryLevel;
-    bool conecctionStatus = await PrintBluetoothThermal.connectionStatus;
+    try {
+      final bool result = await PrintBluetoothThermal.bluetoothEnabled;
+      // final bool result = await PrintBluetoothThermal.bluetoothEnabled;
+      // int conecctionStatus2 = await PrintBluetoothThermal.batteryLevel;
+      await connect();
+      bool conecctionStatus = await PrintBluetoothThermal.connectionStatus;
 
-    if (conecctionStatus) {
-      const PaperSize paper = PaperSize.mm58;
-      final profile = await CapabilityProfile.load();
+      if (conecctionStatus) {
+        const PaperSize paper = PaperSize.mm58;
+        final profile = await CapabilityProfile.load();
 
-      await PrintBluetoothThermal.writeBytes(tipo == 0 ? await receiptSaveForm(paper: paper, profile: profile, datos: datos!) : await receiptNewForm(paper: paper, profile: profile, datos: datos2!));
+        await PrintBluetoothThermal.writeBytes(tipo == 0 ? await receiptSaveForm(paper: paper, profile: profile, datos: datos!) : await receiptNewForm(paper: paper, profile: profile, datos: datos2!));
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

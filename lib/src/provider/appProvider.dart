@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:openseasapp/src/constants/endpoint.dart';
+import 'package:openseasapp/src/models/formPendingModel.dart';
 import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/newformModel.dart';
 import 'package:openseasapp/src/models/userListModel.dart';
@@ -13,8 +14,8 @@ import '../models/generic/genericResponseModel.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/reciberForm.Model.dart';
-import 'package:mime_type/mime_type.dart';
-import 'package:http_parser/http_parser.dart';
+// import 'package:mime_type/mime_type.dart';
+// import 'package:http_parser/http_parser.dart';
 
 import '../models/saveFormModel.dart';
 
@@ -98,7 +99,7 @@ class AppProvider {
     }
   }
 
-  Future<List<FormDataResult>> findFom({required String formId, String type = ""}) async {
+  Future<GenericResponse> findFom({required String formId, String type = ""}) async {
     final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
@@ -111,16 +112,46 @@ class AppProvider {
 
       final decodedata = json.decode(response.body);
       //  print(decodedata);
-      List<FormDataResult> respuesta = [];
-      if (decodedata["success"]) {
-        respuesta = List<FormDataResult>.from(decodedata["result"].map((x) => FormDataResult.fromJson(x)));
-      }
+      //    List<FormDataResult> respuesta = [];
+      // if (decodedata["success"]) {
+      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? List<FormDataResult>.from(decodedata["result"].map((x) => FormDataResult.fromJson(x))) : null);
+
+      // respuesta = List<FormDataResult>.from(decodedata["result"].map((x) => FormDataResult.fromJson(x)));
+      //  }
 
       return respuesta;
       // return listDocumentType;
     } catch (e) {
       print(e);
-      return [];
+      return GenericResponse(message: e.toString(), success: false);
+    }
+  }
+
+  Future<GenericResponse> getFormPending() async {
+    final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
+    // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
+
+    try {
+      final url = Uri.parse(_baseUrl + "itmsshipping/findFormPending");
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},
+      ).timeout(const Duration(minutes: 1));
+
+      final decodedata = json.decode(response.body);
+      //  print(decodedata);
+      //    List<FormDataResult> respuesta = [];
+      // if (decodedata["success"]) {
+      final respuesta = GenericResponse.fromJson(decodedata, decodedata["success"] == true ? List<ResultFormPending>.from(decodedata["result"].map((x) => ResultFormPending.fromJson(x))) : []);
+
+      // respuesta = List<FormDataResult>.from(decodedata["result"].map((x) => FormDataResult.fromJson(x)));
+      //  }
+
+      return respuesta;
+      // return listDocumentType;
+    } catch (e) {
+      print(e);
+      return GenericResponse(message: e.toString(), success: false);
     }
   }
 
@@ -220,7 +251,7 @@ class AppProvider {
       folder: "itms/shipping/firmas",
     );
 
-    print(response.secureUrl);
+    // print(response.secureUrl);
     return response.secureUrl.toString();
   }
 }
