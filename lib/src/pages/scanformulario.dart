@@ -103,42 +103,69 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
             SizedBox(
               height: widthheight(ctn: context, fSize: 20),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: widthheight(ctn: context, fSize: 24)),
-              child: Visibility(
-                  visible: _mostrar,
-                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: _formularios.map((e) => formulario(form: e)).toList())),
-            ),
-            Consumer<AppBloc>(
-              builder: (_, appBloc, __) {
-                if (appBloc.formPending.isEmpty) return const SizedBox();
+            Visibility(
+                visible: _mostrar,
+                child: Padding(
+                  padding: EdgeInsets.only(left: widthheight(ctn: context, fSize: 24), bottom: widthheight(ctn: context, fSize: 24)),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: _formularios.map((e) => formulario(form: e)).toList()),
+                )),
 
-                return ListView.builder(
-                  itemCount: appBloc.formPending.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () async => await scanQR(tipo: 1),
-                      child: SizedBox(
-                        height: 100,
-                        child: ListTile(
-                          title: Column(
-                            children: [
-                              Text(
-                                appBloc.formPending[index].formNumber,
-                                style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
+            // SizedBox(
+            //   height: widthheight(ctn: context, fSize: 20),
+            // ),
+            SizedBox(
+              child: Consumer<AppBloc>(
+                builder: (_, appBloc, __) {
+                  if (appBloc.formPending.isEmpty) return const SizedBox();
+
+                  return Column(
+                    children: [
+                      const Divider(
+                        thickness: 3,
+                        height: 20,
+                      ),
+                      Text(
+                        "Order Pending Signature",
+                        style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
+                      ),
+                      SizedBox(
+                        height: widthheight(ctn: context, fSize: 10),
+                      ),
+                      SizedBox(
+                        height: widthheight(ctn: context, fSize: 600),
+                        child: ListView.builder(
+                          itemCount: appBloc.formPending.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                _barcodeController.text = appBloc.formPending[index].formNumber;
+                                await scanQR(tipo: 1);
+                              },
+                              child: SizedBox(
+                                height: widthheight(ctn: context, fSize: 60),
+                                child: ListTile(
+                                  title: Column(
+                                    children: [
+                                      Text(
+                                        appBloc.formPending[0].formNumber,
+                                        style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
+                                      ),
+                                      Text(
+                                        appBloc.formPending[0].senderName,
+                                        style: textos(ctn: context, fSize: 14, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              Text(
-                                appBloc.formPending[index].senderName,
-                                style: textos(ctn: context, fSize: 14, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             )
           ],
         ),
@@ -319,6 +346,7 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   //print(resp);
                   if (resp.success) {
                     await GlobalHelpper().printReciver(datos: resp.result);
+                    await Provider.of<AppBloc>(context, listen: true).getFormPending();
                   }
 
                   _alerta.disspose();
