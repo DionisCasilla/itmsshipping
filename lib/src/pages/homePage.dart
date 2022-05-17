@@ -7,15 +7,24 @@ import 'package:openseasapp/src/constants/appimages.dart';
 import 'package:openseasapp/src/constants/colors.dart';
 // import 'package:openseasapp/src/helper/animation_fade_route.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
+import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/models/userListModel.dart';
 import 'package:openseasapp/src/pages/selectOperationPage.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String? title;
 
   HomePage({this.title});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final _router = FluroRouter();
+
+  final _helpper = GlobalHelpper();
 
   @override
   Widget build(BuildContext context) {
@@ -76,19 +85,30 @@ class HomePage extends StatelessWidget {
                               tag: Key(user.userId.toString()),
                               child: CardUser(
                                 img: AppImages.userIco,
-                                onTap: () {
-                                  // _router.navigateTo(context, "/operation", transition: TransitionType.inFromLeft);
-                                  // Navigator.push(context, FadeRoute(page: const SelectOperationPage()));
+                                onTap: () async {
+                                  UserModel.instance.interId = user.interId;
+                                  UserModel.instance.userId = user.userId;
+                                  UserModel.instance.userName = user.userName;
+                                  await Provider.of<AppBloc>(context, listen: false).getFormPending();
                                   if (user.keyRequered) {
+                                    final _approve = await _helpper.userKeyValid(context);
+                                    if (_approve) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SelectOperationPage()),
+                                      );
+                                    } else {
+                                      // _helpper.showValidation(ctn: context, tipo: 0, titulo: "Access denied", msg: "User key is requered!");
+                                      final _alerta2 = Alertas(titulo: "Access denied", subtitulo: "User key is requered!", ctn: context, tipo: _approve ? 2 : 3);
+                                      _alerta2.showAlert();
+                                      await Future.delayed(const Duration(seconds: 2));
+                                      _alerta2.disspose();
+                                    }
                                   } else {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => SelectOperationPage()),
                                     );
-
-                                    UserModel.instance.interId = user.interId;
-                                    UserModel.instance.userId = user.userId;
-                                    UserModel.instance.userName = user.userName;
                                   }
 
                                   // Navigator.pushNamed(context, '/operation');

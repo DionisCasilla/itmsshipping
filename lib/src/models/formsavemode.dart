@@ -141,6 +141,7 @@ class FormSavingModel {
     required this.paqueteEntregadoUsuarioId,
     required this.paqueteEntregadoUsuarioNombre,
     required this.paqueteEntregadoFirma,
+    required this.paqueteFirmado,
   });
 
   String interId;
@@ -199,6 +200,7 @@ class FormSavingModel {
   String paqueteEntregadoUsuarioId;
   String paqueteEntregadoUsuarioNombre;
   String paqueteEntregadoFirma;
+  String paqueteFirmado;
 
   factory FormSavingModel.fromJson(Map<String, dynamic> json) => FormSavingModel(
         interId: json["InterID"],
@@ -257,6 +259,7 @@ class FormSavingModel {
         paqueteEntregadoUsuarioId: json["PaqueteEntregadoUsuarioID"],
         paqueteEntregadoUsuarioNombre: json["PaqueteEntregadoUsuarioNombre"],
         paqueteEntregadoFirma: json["PaqueteEntregadoFirma"],
+        paqueteFirmado: json["PaqueteFirmado"],
       );
 
   Map<String, dynamic> toJson() => {

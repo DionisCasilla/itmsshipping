@@ -82,7 +82,7 @@ class AppProvider {
     try {
       //  print(ResultAppLogin.instance.token);
       // print(json.encode(userModel.toJson()));
-      final url = Uri.parse(_baseUrl + "itmsshipping/userkeyvalidate/$userkey");
+      final url = Uri.parse(_baseUrl + "itmsshipping/userkeyvalidate/$userkey/${UserModel.instance.userId}");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},

@@ -29,6 +29,7 @@ class TxtG extends StatelessWidget {
   VoidCallback? prefixIconClick;
   TextInputAction textInputAction;
   Function? onSubmitted;
+  double? cheight;
 
   TxtG(
       {Key? key,
@@ -52,6 +53,7 @@ class TxtG extends StatelessWidget {
       this.suffixIconF,
       this.prefixIconClick,
       this.onSubmitted,
+      this.cheight,
       this.textInputAction = TextInputAction.go,
       this.onclickTap})
       : super(key: key);
@@ -59,11 +61,17 @@ class TxtG extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: (lineOnText == 1 ? 8 : 10.0), bottom: (lineOnText == 1 ? 0 : 0)),
+      padding: EdgeInsets.only(
+          top: (lineOnText == 1
+              ? cheight == null
+                  ? 8
+                  : 0
+              : 10.0),
+          bottom: (lineOnText == 1 ? 0 : 0)),
       child: Container(
         padding: EdgeInsets.zero,
         margin: EdgeInsets.zero,
-        height: widthheight(ctn: context, fSize: (lineOnText == 1 ? 90 : 100), tipo: 2),
+        height: widthheight(ctn: context, fSize: (lineOnText == 1 ? cheight ?? 90 : 100), tipo: 2),
         width: widthheight(ctn: context, fSize: 328),
         alignment: Alignment.centerLeft,
         decoration: BoxDecoration(
@@ -194,54 +202,56 @@ class _TxtGenericState extends State<TxtGeneric> {
   @override
   Widget build(BuildContext context) {
     var maskFormatter = MaskTextInputFormatter(mask: widget.maskString.toString(), filter: {"#": RegExp(r'[0-9]')});
-    return widget.txtStream != null
-        ? StreamBuilder(
-            stream: widget.txtStream,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return Padding(
-                  padding: widget.txtPaddingAll,
-                  child: TextField(
-                    maxLength: widget.maxlengthText,
-                    // focusNode: widget.focusNode,
-                    textInputAction: widget.textInputAction,
-                    readOnly: widget.isReadOnly,
-                    inputFormatters: widget.maskString.toString() != "" ? [maskFormatter] : widget.textInputFormatter,
-                    maxLines: widget.lineOnText,
-                    controller: widget.txtController,
-                    keyboardType: widget.inputType,
-                    decoration: _decoracion(isBoder: widget.isBorder, errorMessage: snapshot.error.toString(), isFillColor: _focus),
-                    onChanged: (as) => widget.onChangedStream,
-                    onTap: widget.txtonTap,
-                    style: textos(ctn: context, fSize: 16, customcolor: color050855),
-                    obscureText: widget.isObscureText ?? false,
-                    onSubmitted: (as) => widget.onSubmitted!(),
-                  )
-                  // focusNode: widget.txtfocusNode),
-                  );
-            },
-          )
-        : Padding(
-            padding: widget.txtPaddingAll,
-            child: Focus(
+    if (widget.txtStream != null) {
+      return StreamBuilder(
+        stream: widget.txtStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Padding(
+              padding: widget.txtPaddingAll,
               child: TextField(
                 maxLength: widget.maxlengthText,
                 // focusNode: widget.focusNode,
+                textInputAction: widget.textInputAction,
                 readOnly: widget.isReadOnly,
                 inputFormatters: widget.maskString.toString() != "" ? [maskFormatter] : widget.textInputFormatter,
                 maxLines: widget.lineOnText,
-                controller: widget.txtController!,
+                controller: widget.txtController,
                 keyboardType: widget.inputType,
-                decoration: _decoracion(isBoder: widget.isBorder, isFillColor: _focus),
-                obscureText: widget.isObscureText ?? false,
-                textInputAction: widget.textInputAction,
-                //bloc.changeEmail,
+                decoration: _decoracion(isBoder: widget.isBorder, errorMessage: snapshot.error.toString(), isFillColor: _focus),
+                onChanged: (as) => widget.onChangedStream,
+                onTap: widget.txtonTap,
                 style: textos(ctn: context, fSize: 16, customcolor: color050855),
-                onTap: widget.txtonTap!,
-                onChanged: (as) => widget.onChangedText,
-                onSubmitted: (String a) => widget.onSubmitted!(a),
-              ),
-            ),
-          );
+                obscureText: widget.isObscureText ?? false,
+                onSubmitted: (as) => widget.onSubmitted!(),
+              )
+              // focusNode: widget.txtfocusNode),
+              );
+        },
+      );
+    } else {
+      return Padding(
+        padding: widget.txtPaddingAll,
+        child: Focus(
+          child: TextField(
+            maxLength: widget.maxlengthText,
+            // focusNode: widget.focusNode,
+            readOnly: widget.isReadOnly,
+            inputFormatters: widget.maskString.toString() != "" ? [maskFormatter] : widget.textInputFormatter,
+            maxLines: widget.lineOnText,
+            controller: widget.txtController!,
+            keyboardType: widget.inputType,
+            decoration: _decoracion(isBoder: widget.isBorder, isFillColor: _focus),
+            obscureText: widget.isObscureText ?? false,
+            textInputAction: widget.textInputAction,
+            //bloc.changeEmail,
+            style: textos(ctn: context, fSize: 16, customcolor: color050855),
+            onTap: widget.txtonTap!,
+            onChanged: (as) => widget.onChangedText,
+            onSubmitted: (s) => widget.onSubmitted,
+          ),
+        ),
+      );
+    }
   }
 
   OutlineInputBorder _customBorder(bool isBorder, bool isFocus, Color color) {

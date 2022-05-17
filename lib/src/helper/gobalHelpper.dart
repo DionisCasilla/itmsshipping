@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/saveFormModel.dart';
+import 'package:openseasapp/src/provider/appProvider.dart';
 import 'package:openseasapp/src/widgets/ddlIpotecca.dart';
 import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
 import 'package:checkbox_grouped/checkbox_grouped.dart';
@@ -453,7 +455,7 @@ class GlobalHelpper {
           title: Column(
             children: [
               Text(
-                "Actualización Disponible",
+                "Update Requered",
                 style: textos(ctn: context, fSize: 20, customcolor: Colors.black),
               ),
               SizedBox(
@@ -505,6 +507,73 @@ class GlobalHelpper {
           ],
         ));
     return await showDialog(barrierDismissible: false, context: context, builder: (BuildContext context) => dialogWithImage);
+  }
+
+  Future<bool> userKeyValid(
+    BuildContext context,
+  ) async {
+    TextEditingController _controller = TextEditingController();
+    bool approve = false;
+    final _appProvider = AppProvider();
+    // final _prefe=PreferenciasUsuario();
+
+    Dialog dialogWithImage = Dialog(
+        backgroundColor: Colors.black54,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.0),
+        ),
+        child: CupertinoActionSheet(
+          title: Column(
+            children: [
+              Text(
+                "User Key",
+                style: textos(ctn: context, fSize: 20, customcolor: Colors.black),
+              ),
+              SizedBox(
+                height: widthheight(ctn: context, fSize: 5),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TxtG(
+              controller: _controller,
+              isObscureText: true,
+              cheight: 120,
+              prefixIconF: FeatherIcons.logIn,
+              prefixIconClick: () async => await () {},
+              textInputType: TextInputType.number,
+              textInputAction: TextInputAction.go,
+              onSubmitted: (String e) async => await () {},
+            ),
+
+            // is
+            CupertinoActionSheetAction(
+              child: Text(
+                'Done!',
+                style: textos(ctn: context, fSize: 16, customcolor: Colors.green, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () async {
+                final respuesta = await _appProvider.userkeyValidate(userkey: _controller.text);
+                Navigator.pop(context, respuesta.success);
+                // print(respuesta);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(
+                'Close',
+                style: textos(
+                  ctn: context,
+                  fSize: 16,
+                ),
+              ),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+          ],
+        ));
+    approve = await showDialog(barrierDismissible: true, context: context, builder: (BuildContext context) => dialogWithImage) ?? false;
+
+    return approve;
   }
 
   Future<void> connect() async {
@@ -585,8 +654,8 @@ class GlobalHelpper {
     // final imagefirma = Imag.decodeImage(imgBytes);
     bytes += ticket.image(image!);
 
-    // Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteEntregadoFirma.toString())).buffer.asUint8List();
-    // final imagefirma = Imag.decodeImage(bytes2);
+    Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteFirmado.toString())).buffer.asUint8List();
+    final imagefirma = Imag.decodeImage(bytes2);
 
     bytes += ticket.text(datos.empresa!.interTexto,
         styles: const PosStyles(
@@ -617,8 +686,8 @@ class GlobalHelpper {
     // bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
     // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
     bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString().replaceAll("|", ","), styles: const PosStyles(align: PosAlign.left));
-    // bytes += ticket.hr();
-    // bytes += ticket.image(imagefirma!);
+    bytes += ticket.hr();
+    bytes += ticket.image(imagefirma!);
     bytes += ticket.hr(ch: '=');
     bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
     bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));

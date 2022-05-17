@@ -116,7 +116,26 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
             SizedBox(
               child: Consumer<AppBloc>(
                 builder: (_, appBloc, __) {
-                  if (appBloc.formPending.isEmpty) return const SizedBox();
+                  if (appBloc.formPending == null) {
+                    return Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Cargando",
+                            style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          const CircularProgressIndicator()
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (appBloc.formPending!.isEmpty) return const SizedBox();
 
                   return Column(
                     children: [
@@ -134,11 +153,11 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                       SizedBox(
                         height: widthheight(ctn: context, fSize: 600),
                         child: ListView.builder(
-                          itemCount: appBloc.formPending.length,
+                          itemCount: appBloc.formPending!.length,
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
                               onTap: () async {
-                                _barcodeController.text = appBloc.formPending[index].formNumber;
+                                _barcodeController.text = appBloc.formPending![index].formNumber;
                                 await scanQR(tipo: 1);
                               },
                               child: SizedBox(
@@ -147,11 +166,11 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                                   title: Column(
                                     children: [
                                       Text(
-                                        appBloc.formPending[0].formNumber,
+                                        appBloc.formPending![0].formNumber,
                                         style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
                                       ),
                                       Text(
-                                        appBloc.formPending[0].senderName,
+                                        appBloc.formPending![0].senderName,
                                         style: textos(ctn: context, fSize: 14, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
                                       ),
                                     ],
@@ -345,8 +364,8 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                   final resp = await _appProvider.saveForm(infoPost: _infoPost);
                   //print(resp);
                   if (resp.success) {
-                    await GlobalHelpper().printReciver(datos: resp.result);
-                    await Provider.of<AppBloc>(context, listen: true).getFormPending();
+                    await Provider.of<AppBloc>(context, listen: false).getFormPending();
+                    GlobalHelpper().printReciver(datos: resp.result);
                   }
 
                   _alerta.disspose();

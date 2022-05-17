@@ -22,7 +22,7 @@ class AppBloc with ChangeNotifier {
   ResultAppLogin appLogin = ResultAppLogin();
   List<UserModel> userListModel = [];
   List<ResultData> newform = [];
-  List<ResultFormPending> formPending = [];
+  List<ResultFormPending>? formPending = null;
 
   getIniInfo() async {
     final respuesta = await _appProvider.loginApp();
@@ -35,7 +35,10 @@ class AppBloc with ChangeNotifier {
 
   getFormPending() async {
     final _result = await _appProvider.getFormPending();
-    formPending = _result.result;
+    if (formPending != null) {
+      formPending!.clear();
+    }
+    formPending = _result.success == false ? [] : _result.result;
     notifyListeners();
   }
 }
