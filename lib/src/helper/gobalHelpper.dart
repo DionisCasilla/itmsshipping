@@ -605,8 +605,8 @@ class GlobalHelpper {
     bytes += ticket.text(datos.empresa!.interTexto,
         styles: const PosStyles(
           align: PosAlign.center,
-          height: PosTextSize.size3,
-          width: PosTextSize.size3,
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
         ),
         linesAfter: 1);
 
@@ -660,8 +660,8 @@ class GlobalHelpper {
     bytes += ticket.text(datos.empresa!.interTexto,
         styles: const PosStyles(
           align: PosAlign.center,
-          height: PosTextSize.size3,
-          width: PosTextSize.size3,
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
         ),
         linesAfter: 1);
 
@@ -681,11 +681,11 @@ class GlobalHelpper {
       PosColumn(text: "Destination", width: 5),
       PosColumn(text: datos.ordenInfo!.paqueteSenderDireccion.toString(), width: 7),
     ]);
-    // bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
-    // bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
-    // bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
-    // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString().replaceAll("|", ","), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString(), styles: const PosStyles(align: PosAlign.left));
     bytes += ticket.hr();
     bytes += ticket.image(imagefirma!);
     bytes += ticket.hr(ch: '=');

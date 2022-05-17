@@ -166,11 +166,11 @@ class _ScanOrderPageState extends State<ScanOrderPage> {
                                   title: Column(
                                     children: [
                                       Text(
-                                        appBloc.formPending![0].formNumber,
+                                        appBloc.formPending![index].formNumber,
                                         style: textos(ctn: context, fSize: 16, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: color050855),
                                       ),
                                       Text(
-                                        appBloc.formPending![0].senderName,
+                                        appBloc.formPending![index].senderName,
                                         style: textos(ctn: context, fSize: 14, fontWeight: FontWeight.w500, fontFamily: "Poppins", customcolor: colore83435),
                                       ),
                                     ],
