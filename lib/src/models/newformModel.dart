@@ -72,16 +72,9 @@ class ResultData {
 }
 
 class InformationModel {
-  InformationModel({
-    this.description,
-    this.enabled,
-    this.requered = false,
-    this.order,
-    this.values,
-    this.type,
-    this.id,
-    // this.createdDate,
-  });
+  InformationModel({this.description, this.enabled, this.requered = false, this.order, this.values, this.type, this.id, this.information
+      // this.createdDate,
+      });
 
   String? description;
   bool? enabled;
@@ -90,17 +83,19 @@ class InformationModel {
   String? values;
   String? type;
   String? id;
+  dynamic information;
   // CreatedDate createdDate;
 
   factory InformationModel.fromJson(Map<String, dynamic> json) => InformationModel(
-        description: json["description"] ?? "",
-        enabled: json["enabled"] ?? false,
-        requered: json["requered"] ?? false,
-        order: json["order"] ?? 0,
-        values: json["values"] ?? "",
-        type: json["type"] ?? "",
-        id: json["id"] ?? "",
-        // createdDate: json["createdDate"] == null ? null : createdDateValues.map[json["createdDate"]],
+      description: json["description"] ?? "",
+      enabled: json["enabled"] ?? false,
+      requered: json["requered"] ?? false,
+      order: json["order"] ?? 0,
+      values: json["values"] ?? "",
+      type: json["type"] ?? "",
+      id: json["id"] ?? "",
+      information: json["information"]
+      // createdDate: json["createdDate"] == null ? null : createdDateValues.map[json["createdDate"]],
       );
 
   Map<String, dynamic> toJson() => {

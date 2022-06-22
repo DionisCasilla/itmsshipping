@@ -43,6 +43,8 @@ class _NewFormPageState extends State<NewFormPage> {
     _steps = _listItems.map((form) {
       List<Formulario> _frm2 = [];
 
+      form.information.removeWhere((element) => element.enabled == false);
+
       form.information
           .map((e) => _frm2.add(Formulario(
                 information: e,
@@ -136,7 +138,7 @@ class _NewFormPageState extends State<NewFormPage> {
       if (campos.requered) {
         //  if (campos.information.description!.isNotEmpty ) loaninfo.informationValue = campos.information.description;
         if (campos.type == "Signature") {
-          print(campos.signatureController.value.length);
+          // print(campos.signatureController.value.length);
           if (campos.signatureController.value.isEmpty) cERROR.add(campos.information.description.toString() + " is requered");
         } else {
           String valor = "${campos.textEditingController.text}${campos.selectData}";
@@ -227,7 +229,7 @@ class NewFomrToSave {
 class Formulario extends StatelessWidget {
   InformationModel information;
   final textEditingController = TextEditingController();
-  final signatureController = SignatureController();
+  final signatureController = SignatureController(penStrokeWidth: 2, penColor: Colors.black, exportBackgroundColor: Colors.white);
 
   String selectData = "";
   String id = "";

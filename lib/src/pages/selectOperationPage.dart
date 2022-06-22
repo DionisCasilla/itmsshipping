@@ -6,6 +6,7 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:openseasapp/src/bloc/appBloc.dart';
 
 // import 'package:openseasapp/src/constants/appimages.dart';
 // import 'package:openseasapp/src/constants/colors.dart';
@@ -13,6 +14,7 @@ import 'package:openseasapp/src/constants/constants.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 // import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/models/saveFormModel.dart';
+import 'package:openseasapp/src/models/userListModel.dart';
 import 'package:openseasapp/src/pages/newformPage.dart';
 import 'package:openseasapp/src/pages/printerPage.dart';
 import 'package:openseasapp/src/pages/scanformulario.dart';
@@ -24,6 +26,7 @@ import 'package:dio/dio.dart';
 
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:provider/provider.dart';
 
 class SelectOperationPage extends StatelessWidget {
   final String title;
@@ -73,7 +76,7 @@ class SelectOperationPage extends StatelessWidget {
                 btnAcciones(
                     context: context,
                     iconData: FeatherIcons.fileText,
-                    label: "Shipping Form",
+                    label: UserModel.instance.userLangID == "ENU" ? "Shipping Form" : "Registrar Paquete",
                     onClick: () {
                       Navigator.push(
                         context,
@@ -86,7 +89,7 @@ class SelectOperationPage extends StatelessWidget {
                 btnAcciones(
                     context: context,
                     iconData: FeatherIcons.truck,
-                    label: "Delivery",
+                    label: UserModel.instance.userLangID == "ENU" ? "Delivery" : "Control de entregas",
                     onClick: () {
                       Navigator.push(
                         context,

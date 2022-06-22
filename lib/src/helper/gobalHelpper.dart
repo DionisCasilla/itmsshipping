@@ -8,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/saveFormModel.dart';
+import 'package:openseasapp/src/models/userListModel.dart';
 import 'package:openseasapp/src/provider/appProvider.dart';
 import 'package:openseasapp/src/widgets/ddlIpotecca.dart';
 import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
@@ -94,7 +96,7 @@ class GlobalHelpper {
       pickerTheme: DateTimePickerTheme(
         showTitle: true,
         confirm: Text('Listo', style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColor)),
-        cancel: Text('Cancelar', style: TextStyle(fontSize: 18, color: Colors.red)),
+        cancel: const Text('Cancelar', style: TextStyle(fontSize: 18, color: Colors.red)),
       ),
       minDateTime: tipo == 0 ? DateTime.parse(_mindatetime) : DateTime.parse(_mindatetime),
       maxDateTime: tipo == 0 ? DateTime.parse(_maxdatetime) : DateTime.parse(_initdate),
@@ -384,6 +386,102 @@ class GlobalHelpper {
             );
 
         break;
+      case "LIST 2":
+        List<DDLIpItems> _elementosLista = [];
+
+        final _valores = elemento.information;
+
+        _valores.map((list) {
+          _elementosLista.add(DDLIpItems(id: list["id"].toString(), descripcion: list["description"]));
+        }).toList();
+
+        _elementos = DDLIp(
+            id: elemento.id,
+            label: elemento.description,
+            itemsList: _elementosLista,
+            itemSelect: (a) {
+              final dataselect = a as DDLIpItems;
+              // print(dataselect.descripcion);
+              selectData!(dataselect.id);
+            }
+
+            //  (item) async {
+            //   print(item!);
+
+            //   selectData!(item.descripcion);
+
+            // }
+            );
+
+        break;
+      case "LISTMULTISELECT":
+        List<String> _elementosLista = [];
+        List<String> _selectLista = [];
+
+        final _valores = elemento.values.split("|");
+
+        _valores.map((items) {
+          _elementosLista.add(items);
+        }).toList();
+
+        _elementos = MultipleSearchSelection(
+          items: _elementosLista, // List<String>
+          // initialPickedItems: List<DDLIpItems> [],
+          fuzzySearch: FuzzySearch.jaro,
+          padding: const EdgeInsets.all(20),
+          title: Text(
+            elemento.description,
+            style: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+          ),
+          titlePadding: const EdgeInsets.symmetric(vertical: 10),
+          searchItemTextContentPadding: const EdgeInsets.symmetric(horizontal: 10),
+          maximumShowItemsHeight: 200,
+          hintText: 'Type here to search',
+          hintTextStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+          selectAllTextStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+          selectAllBackgroundColor: Colors.white,
+          selectAllOnHoverBackgroundColor: Colors.blue[300],
+          selectAllOnHoverTextColor: Colors.white,
+          selectAllOnHoverFontWeight: FontWeight.bold,
+          // clearAllTextStyle: kStyleDefault.copyWith(
+          //   color: Colors.red,
+          // ),
+          clearAllOnHoverFontWeight: FontWeight.bold,
+          clearAllOnHoverBackgroundColor: Colors.white,
+          pickedItemTextStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.bold, fontFamily: "Poppins", customcolor: color050855),
+          pickedItemBackgroundColor: Colors.red[300]!.withOpacity(0.5),
+          pickedItemBorderRadius: 6,
+          pickedItemFontWeight: FontWeight.bold,
+          pickedItemTextColor: color050855,
+          showedItemTextStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+          showedItemsBackgroundColor: Colors.grey.withOpacity(0.1),
+          showShowedItemsScrollbar: false,
+          searchItemTextStyle: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+          noResultsWidget: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'No items found',
+              style: textos(ctn: ctn, fSize: 14, fontWeight: FontWeight.w900, fontFamily: "Poppins", customcolor: color050855),
+            ),
+          ),
+          onTapShowedItem: () {},
+
+          onPickedChange: (items) {},
+          onItemAdded: (item) {
+            _selectLista.add(item);
+            print(_selectLista);
+            selectData!(_selectLista.join("|"));
+            //    selectData!(_selectLista);
+          },
+          onItemRemoved: (item) {
+            _selectLista.remove(item);
+            selectData!(_selectLista.join("|"));
+            //  selectData!(_selectLista);
+            print('$item removed from picked items');
+          },
+        );
+
+        break;
       case "Signature":
         final _sig = SignatureController();
         _elementos = Padding(
@@ -447,7 +545,7 @@ class GlobalHelpper {
 
     Dialog dialogWithImage = Dialog(
         backgroundColor: Colors.black54,
-        insetPadding: EdgeInsets.symmetric(horizontal: 5.0),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.0),
         ),
@@ -527,7 +625,7 @@ class GlobalHelpper {
           title: Column(
             children: [
               Text(
-                "User Key",
+                UserModel.instance.userLangID == "ENU" ? "User Key" : "Clave",
                 style: textos(ctn: context, fSize: 20, customcolor: Colors.black),
               ),
               SizedBox(
@@ -550,7 +648,7 @@ class GlobalHelpper {
             // is
             CupertinoActionSheetAction(
               child: Text(
-                'Done!',
+                UserModel.instance.userLangID == "ENU" ? 'Done!' : "OK",
                 style: textos(ctn: context, fSize: 16, customcolor: Colors.green, fontWeight: FontWeight.bold),
               ),
               onPressed: () async {
@@ -561,7 +659,7 @@ class GlobalHelpper {
             ),
             CupertinoActionSheetAction(
               child: Text(
-                'Close',
+                UserModel.instance.userLangID == "ENU" ? 'Close' : "Cerrar",
                 style: textos(
                   ctn: context,
                   fSize: 16,
@@ -602,13 +700,13 @@ class GlobalHelpper {
     Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteEntregadoFirma.toString())).buffer.asUint8List();
     final imagefirma = Imag.decodeImage(bytes2);
 
-    bytes += ticket.text(datos.empresa!.interTexto,
-        styles: const PosStyles(
-          align: PosAlign.center,
-          height: PosTextSize.size2,
-          width: PosTextSize.size2,
-        ),
-        linesAfter: 1);
+    // bytes += ticket.text(datos.empresa!.interTexto,
+    //     styles: const PosStyles(
+    //       align: PosAlign.center,
+    //       height: PosTextSize.size2,
+    //       width: PosTextSize.size2,
+    //     ),
+    //     linesAfter: 1);
 
     bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.center));
@@ -637,6 +735,7 @@ class GlobalHelpper {
     bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
     bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.cut();
+
     return bytes;
   }
 
@@ -651,46 +750,60 @@ class GlobalHelpper {
     final ByteData data = await rootBundle.load(AppImages.openseasIco);
     final Uint8List imgBytes = data.buffer.asUint8List();
     final image = Imag.decodeImage(imgBytes);
-    // final imagefirma = Imag.decodeImage(imgBytes);
-    bytes += ticket.image(image!);
-
     Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteFirmado.toString())).buffer.asUint8List();
     final imagefirma = Imag.decodeImage(bytes2);
+    // final imagefirma = Imag.decodeImage(imgBytes);
 
-    bytes += ticket.text(datos.empresa!.interTexto,
-        styles: const PosStyles(
-          align: PosAlign.center,
-          height: PosTextSize.size2,
-          width: PosTextSize.size2,
-        ),
-        linesAfter: 1);
-
-    bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.image(image!);
+    bytes += ticket.text(datos.ordenInfo!.paqueteCiudadTexto, styles: const PosStyles(align: PosAlign.center, bold: true));
+    bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.left));
 
     // bytes += ticket.hr();
     // bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.hr();
-
     bytes += ticket.row([
-      PosColumn(text: "VOUCHER NO.", width: 5),
+      PosColumn(text: "VOUCHER NO:", width: 5),
       PosColumn(text: datos.ordenInfo!.paqueteId.toString(), width: 7, styles: const PosStyles(bold: true)),
     ]);
     bytes += ticket.row([
-      PosColumn(text: "Destination", width: 5),
-      PosColumn(text: datos.ordenInfo!.paqueteSenderDireccion.toString(), width: 7),
+      PosColumn(text: "DATE:", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteContenidoFecha1.toString(), width: 7),
     ]);
-    bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString(), styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.row([
+      PosColumn(text: "SENDER NAME:", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteSenderNombre.toString(), width: 7),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "RECIEVER NAME:", width: 5),
+      PosColumn(text: datos.ordenInfo!.paqueteRecieverNombre.toString(), width: 7),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "CONTENT:", width: 5),
+      PosColumn(text: "${datos.ordenInfo!.paqueteContenidoPaquetes.toString()} ${datos.ordenInfo!.paqueteContenidoTipo.toString()}", width: 7),
+    ]);
+    // b
+    // bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("CONTENT:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("${datos.ordenInfo!.paqueteContenidoPaquetes.toString()} ${datos.ordenInfo!.paqueteContenidoTipo.toString()}", styles: const PosStyles(align: PosAlign.left));
     bytes += ticket.hr();
     bytes += ticket.image(imagefirma!);
+    bytes += ticket.hr(ch: '_');
+    bytes += ticket.text(datos.ordenInfo!.paqueteId.toString(), styles: const PosStyles(align: PosAlign.center));
+    // bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
+    // bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.feed(1);
+    bytes += ticket.hr();
+    bytes += ticket.text(datos.empresa!.empresaName.toString(), styles: const PosStyles(align: PosAlign.center, bold: true));
+    bytes += ticket.qrcode(datos.ordenInfo!.paqueteId.toString(), size: QRSize.Size6);
+    bytes += ticket.text(datos.ordenInfo!.paqueteId.toString(), styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.ordenInfo!.paqueteNumero.toString(), styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.hr(ch: '=');
-    bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
-    bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.feed(2);
     bytes += ticket.cut();
     return bytes;
   }

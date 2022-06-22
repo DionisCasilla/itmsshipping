@@ -180,14 +180,14 @@ class AppProvider {
     }
   }
 
-  Future<List<ResultData>> newForm() async {
+  Future<List<ResultData>> newForm({String language = "ENU"}) async {
     final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
     // UserPefilModel _userRespose = UserPefilModel(data: data, message: message, result: result, statusCode: statusCode);
 
     try {
       //   print(ResultAppLogin.instance.token);
       // print(json.encode(userModel.toJson()));
-      final url = Uri.parse(_baseUrl + "itmsshipping/createForm");
+      final url = Uri.parse(_baseUrl + "itmsshipping/createForm/$language");
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ${ResultAppLogin.instance.token}'},
@@ -247,7 +247,7 @@ class AppProvider {
     final response = await _cloudinary.uploadFile(
       filePath: image.path,
       resourceType: CloudinaryResourceType.image,
-      fileName: "$guid.jpg",
+      fileName: guid,
       folder: "itms/shipping/firmas",
     );
 

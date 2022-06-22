@@ -28,9 +28,14 @@ class AppBloc with ChangeNotifier {
     final respuesta = await _appProvider.loginApp();
     appLogin = respuesta.result;
     userListModel = await _appProvider.listUser();
-    newform = await _appProvider.newForm();
+    // newform = await _appProvider.newForm();
 
     notifyListeners();
+  }
+
+  Future<void> formLoad({String language = "ENU"}) async {
+    newform = await _appProvider.newForm(language: language);
+    // notifyListeners();
   }
 
   getFormPending() async {

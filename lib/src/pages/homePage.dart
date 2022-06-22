@@ -89,17 +89,24 @@ class _HomePageState extends State<HomePage> {
                                   UserModel.instance.interId = user.interId;
                                   UserModel.instance.userId = user.userId;
                                   UserModel.instance.userName = user.userName;
-                                  await Provider.of<AppBloc>(context, listen: false).getFormPending();
+                                  UserModel.instance.userLangID = user.userLangID;
+
                                   if (user.keyRequered) {
                                     final _approve = await _helpper.userKeyValid(context);
                                     if (_approve) {
+                                      await Provider.of<AppBloc>(context, listen: false).getFormPending();
+                                      await Provider.of<AppBloc>(context, listen: false).formLoad(language: UserModel.instance.userLangID);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) => SelectOperationPage()),
                                       );
                                     } else {
                                       // _helpper.showValidation(ctn: context, tipo: 0, titulo: "Access denied", msg: "User key is requered!");
-                                      final _alerta2 = Alertas(titulo: "Access denied", subtitulo: "User key is requered!", ctn: context, tipo: _approve ? 2 : 3);
+                                      final _alerta2 = Alertas(
+                                          titulo: UserModel.instance.userLangID == 'ENU' ? "Access denied" : "Acceso denegado",
+                                          subtitulo: UserModel.instance.userLangID == 'ENU' ? "User key is requered!" : "Clave de usuario requerida!",
+                                          ctn: context,
+                                          tipo: _approve ? 2 : 3);
                                       _alerta2.showAlert();
                                       await Future.delayed(const Duration(seconds: 2));
                                       _alerta2.disspose();
