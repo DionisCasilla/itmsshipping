@@ -14,6 +14,7 @@ class ResultAppLogin {
 
   Config? config;
   String? token = "";
+  String? currentAppVersion;
 
   factory ResultAppLogin.fromJson(Map<String, dynamic> json) => ResultAppLogin(
         config: json["config"] == null ? null : Config.fromJson(json["config"]),

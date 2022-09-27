@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -175,8 +176,13 @@ class AppProvider {
 
       return respuesta;
       // return listDocumentType;
-    } catch (e) {
-      return GenericResponse(message: e.toString(), success: false);
+      // }
+    } on TimeoutException catch (_) {
+      // A timeout occurred.
+      return GenericResponse(message: "", success: false, errorModel: ErrorModel(tipo: 1, message: "TimeOUT"));
+    } on SocketException catch (e) {
+      // Other exception
+      return GenericResponse(message: "", success: false, errorModel: ErrorModel(tipo: 2, message: "Internet"));
     }
   }
 
@@ -235,23 +241,42 @@ class AppProvider {
       // }
       // return respuesta;
       // return listDocumentType;
-    } catch (e) {
-      return GenericResponse(message: e.toString(), success: false);
+      // } catch (e) {
+      //   return GenericResponse(message: e.toString(), success: false);
+      // }
+    } on TimeoutException catch (_) {
+      // A timeout occurred.
+      return GenericResponse(message: "Time Out", success: false, errorModel: ErrorModel(tipo: 1, message: "TimeOut"));
+    } on SocketException catch (_) {
+      // Other exception
+      return GenericResponse(message: "", success: false, errorModel: ErrorModel(tipo: 2, message: "Internet"));
     }
   }
 
-  Future<String> uploadImage({required File image, required String guid}) async {
+  Future<GenericResponse> uploadImage({required File image, required String guid}) async {
     final _baseUrl = await GlobalHelpper().isInDebugMode ? Endpoint.baseUrlDev : Endpoint.baseUrlPro;
 
-    final _cloudinary = Cloudinary("776156192642265", "i7GkyXZH6dp2LVb3ztBmsMIqtHE", "dfbwtygxk");
-    final response = await _cloudinary.uploadFile(
-      filePath: image.path,
-      resourceType: CloudinaryResourceType.image,
-      fileName: guid,
-      folder: "itms/shipping/firmas",
-    );
+    try {
+      final _cloudinary = Cloudinary("776156192642265", "i7GkyXZH6dp2LVb3ztBmsMIqtHE", "dfbwtygxk");
+      final response = await _cloudinary.uploadFile(
+        filePath: image.path,
+        resourceType: CloudinaryResourceType.image,
+        fileName: guid,
+        folder: "itms/shipping/firmas",
+      );
+      if (response.isSuccessful == false && response.error != null) {
+        return GenericResponse(success: false, message: "Error to uplodad", result: "", errorModel: ErrorModel(tipo: response.error!.contains("SocketException") ? 2 : 1));
+      } else {
+        return GenericResponse(success: true, result: response.secureUrl ?? "", message: "");
+      }
+      // print(response.secureUrl);
 
-    // print(response.secureUrl);
-    return response.secureUrl.toString();
+    } on TimeoutException catch (_) {
+      // A timeout occurred.
+      return GenericResponse(message: "Time Out", success: false, errorModel: ErrorModel(tipo: 1, message: "TimeOut"));
+    } on SocketException catch (_) {
+      // Other exception
+      return GenericResponse(message: "", success: false, errorModel: ErrorModel(tipo: 2, message: "Internet"));
+    }
   }
 }

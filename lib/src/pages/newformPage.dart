@@ -1,16 +1,23 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
 
 import 'package:openseasapp/src/models/newformModel.dart';
+import 'package:openseasapp/src/models/userListModel.dart';
+import 'package:openseasapp/src/preferencias/usuarioPrefes.dart';
 import 'package:openseasapp/src/provider/appProvider.dart';
 import 'package:openseasapp/src/widgets/btnIpoteca.dart';
 import 'package:openseasapp/src/widgets/customStepper/my_StepProgress.dart';
 import 'package:openseasapp/src/widgets/customStepper/stepper_Model.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
@@ -29,15 +36,19 @@ class NewFormPage extends StatefulWidget {
 class _NewFormPageState extends State<NewFormPage> {
   int _curStep = 0;
   List<StepperModel> _steps = [];
-  PageController _pageController = PageController();
+  PageController pageController = PageController();
   List<ResultData> _listItems = [];
-  List<GroupFomularioModel> _frm1 = [];
-  List<Formulario> _frm2 = [];
+  List<GroupFomularioModel> frm1 = [];
+  List<Formulario> frm2 = [];
+  final _prefe = PreferenciasUsuario();
+  String _guidNew = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    var uuid = const Uuid();
+    _guidNew = uuid.v4();
     _listItems = Provider.of<AppBloc>(context, listen: false).newform;
 
     _steps = _listItems.map((form) {
@@ -53,7 +64,7 @@ class _NewFormPageState extends State<NewFormPage> {
                 requered: e.requered,
               )))
           .toList();
-      _frm1.add(GroupFomularioModel(id: form.id, formularios: _frm2));
+      frm1.add(GroupFomularioModel(id: form.id, formularios: _frm2));
       return StepperModel(
           titulo: form.description,
           contenido: SingleChildScrollView(
@@ -114,7 +125,7 @@ class _NewFormPageState extends State<NewFormPage> {
             curStep: _curStep,
             activeColor: colore83435, // Colors.yellow,
             lineWidth: 6,
-            pageController2: _pageController,
+            pageController2: pageController,
             //  _curStep
             setCurrent: (int i) {
               setState(() {
@@ -129,9 +140,9 @@ class _NewFormPageState extends State<NewFormPage> {
 
   _clickSiguiente() async {
     // Vibrate.feedback(FeedbackType.impact);
-    final formCurrent = _frm1[_curStep];
+    final formCurrent = frm1[_curStep];
 
-    print(formCurrent.id);
+    // print(formCurrent.id);
     List<String> cERROR = [];
 
     for (var campos in formCurrent.formularios) {
@@ -163,54 +174,118 @@ class _NewFormPageState extends State<NewFormPage> {
       await _saveform();
     }
 
-    _pageController.animateToPage(_curStep, duration: const Duration(milliseconds: 400), curve: Curves.linearToEaseOut);
+    pageController.animateToPage(_curStep, duration: const Duration(milliseconds: 400), curve: Curves.linearToEaseOut);
 
     // return _curStep;
   }
 
   Future<void> _saveform() async {
-    final _alerta = Alertas(titulo: "Saving Form", ctn: context);
-    _alerta.showAlert();
-    Map datos = {};
+    try {
+      final _alerta = Alertas(titulo: "Saving Form", ctn: context);
+      _alerta.showAlert();
+      Map datos = {};
+      Uint8List? data;
 
-    for (var formGrupo in _frm1) {
-      for (var element in formGrupo.formularios) {
-        if (element.type == "Signature") {
-          var uuid = Uuid();
-          final _guid = uuid.v4();
-          final Uint8List? data = await element.signatureController.toPngBytes();
-          final tempDir = await getTemporaryDirectory();
-          File file = await File('${tempDir.path}/$_guid.jpeg').create();
-          file.writeAsBytesSync(data!);
+      for (var formGrupo in frm1) {
+        for (var element in formGrupo.formularios) {
+          if (element.type == "Signature") {
+            var uuid = const Uuid();
+            final _guid = uuid.v4();
+            data = await element.signatureController.toPngBytes();
+            final tempDir = await getTemporaryDirectory();
+            File file = await File('${tempDir.path}/$_guid.jpeg').create();
+            file.writeAsBytesSync(data!);
 
-          final _url = await AppProvider().uploadImage(image: file, guid: _guid);
-          String valor = _url;
-          datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
-        } else {
-          String valor = "${element.textEditingController.text}${element.selectData}";
-          datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
+            final _url = await AppProvider().uploadImage(image: file, guid: _guid);
+            String valor = _url.result;
+            datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
+          } else {
+            String valor = "${element.textEditingController.text}${element.selectData}";
+            datos.addAll(NewFomrToSave(key: element.id, value: valor).toJson());
+          }
         }
       }
-    }
+      final _response = await AppProvider().saveNewForm(datos: datos).timeout(const Duration(seconds: 30));
 
-    // print(datos);
+      _alerta.disspose();
+      String _msg = "";
 
-    //var json = jsonEncode(datos);
-    // print(json);
-    final _response = await AppProvider().saveNewForm(datos: datos);
+      //log(jsonEncode(_response));
+      if (_response.success == false) {
+        if (_response.errorModel != null && (_response.errorModel!.tipo! > 1)) {
+          _msg = UserModel.instance.userLangID == "ENU" ? "Uops!, An unexpected error occurred" : "Uops!, Ocurrio un error inesperado";
+        }
 
-    _alerta.disspose();
+        return showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Alert'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(_msg),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(UserModel.instance.userLangID == "ENU" ? "Send later" : 'Enviar mas tarde'),
+                  onPressed: () async {
+                    final _alertaImpresion = Alertas(titulo: "Printting", ctn: context);
+                    _alertaImpresion.showAlert();
+                    datos["shippingform-04-09"] = data;
+                    datos["guid"] = _guidNew;
+                    // print(datos);
+                    List<String> _OrdenesPendiente = _prefe.listaEnviosPendiente ?? [];
 
-    final _alerta2 = Alertas(titulo: _response.message, ctn: context, tipo: _response.success ? 2 : 3);
-    _alerta2.showAlert();
+                    _OrdenesPendiente.removeWhere((orden) => orden.contains(_guidNew));
+                    bool conecctionStatus = await PrintBluetoothThermal.connectionStatus;
 
-    await Future.delayed(const Duration(seconds: 3));
-    if (_response.success) {
-      await GlobalHelpper().printReciver(tipo: 1, datos2: _response.result);
-      Navigator.pop(context);
-    }
+                    if (conecctionStatus) {
+                      const PaperSize paper = PaperSize.mm80;
+                      final profile = await CapabilityProfile.load();
 
-    _alerta2.disspose();
+                      //  for (var item in _OrdenesPendiente) {
+                      //final _datos = jsonDecode(item);
+                      await PrintBluetoothThermal.writeBytes(await GlobalHelpper().tmpreceiptNewForm(paper: paper, profile: profile, datos: datos));
+                      // await Future.delayed(const Duration(seconds: 3));
+                      // }
+                      _prefe.setlistaEnviosPendiente = [];
+                      _alertaImpresion.disspose();
+                      // _alertaImpresion.disspose();
+                      setState(() {});
+                    }
+
+                    _OrdenesPendiente.add(json.encode(datos).toString());
+                    _prefe.setlistaEnviosPendiente = _OrdenesPendiente;
+
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const Spacer(),
+                TextButton(
+                  child: Text(UserModel.instance.userLangID == "ENU" ? "Try again" : 'Volver a intentar'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+
+      await Future.delayed(const Duration(seconds: 3));
+      if (_response.success) {
+        await GlobalHelpper().printReciver(tipo: 1, datos2: _response.result);
+        Navigator.pop(context);
+      }
+    } on TimeoutException catch (_) {
+      // A timeout occurred.
+    } on SocketException catch (_) {}
   }
 }
 
@@ -227,7 +302,7 @@ class NewFomrToSave {
 }
 
 class Formulario extends StatelessWidget {
-  InformationModel information;
+  final InformationModel information;
   final textEditingController = TextEditingController();
   final signatureController = SignatureController(penStrokeWidth: 2, penColor: Colors.black, exportBackgroundColor: Colors.white);
 

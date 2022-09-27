@@ -23,6 +23,6 @@ class Flurorouter {
   });
 
   static final Handler _SplashPage = Handler(handlerFunc: (ctx, params) {
-    return SplashAppPage();
+    return const SplashAppPage();
   });
 }

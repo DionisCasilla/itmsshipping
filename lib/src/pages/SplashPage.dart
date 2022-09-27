@@ -1,7 +1,13 @@
+import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
+import 'package:openseasapp/src/bloc/internetAccessBloc.dart';
 import 'package:openseasapp/src/helper/gobalHelpper.dart';
 import 'package:openseasapp/src/pages/homePage.dart';
 import 'package:openseasapp/src/setup/setup.dart';
@@ -29,16 +35,12 @@ class _SplashAppPageState extends State<SplashAppPage> {
     AppBloc();
     super.initState();
 
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => HomePage()),
-    // );
-    //  _router.navigateTo(context, "/home");
     getInitData();
   }
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<InternetAccessBloc>(context).temporizadorTurno();
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -58,23 +60,40 @@ class _SplashAppPageState extends State<SplashAppPage> {
   }
 
   getInitData() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    await _appBloc.getIniInfo();
-    //String appName = packageInfo.appName;
-    //  String packageName = packageInfo.packageName;
-    // String version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
-    final _version = int.tryParse(buildNumber);
-    // await Provider.of<AppBloc>(context, listen: false).getIniInfo();
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      await _appBloc.getIniInfo();
+      //String appName = packageInfo.appName;
+      //  String packageName = packageInfo.packageName;
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
+      final _version = int.tryParse(buildNumber);
+      Provider.of<AppBloc>(context, listen: false).appLogin?.currentAppVersion = "Ver: " + version + "." + _version.toString();
+      if (Provider.of<AppBloc>(context, listen: false).appLogin != null) {
+        if (Provider.of<AppBloc>(context, listen: false).appLogin!.config!.appversion > _version!) {
+          await Future.delayed(Duration.zero, () => _actualizar());
+        }
 
-    if (Provider.of<AppBloc>(context, listen: false).appLogin.config!.appversion > _version!) {
-      await Future.delayed(Duration.zero, () => _actualizar());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        await GlobalHelpper().errorOpenAPP(context);
+        SystemNavigator.pop();
+        // showDialog(
+        //     context: context,
+        //     builder: (context) {
+        //       return GlobalHelpper().errorOpenAPP(context);
+        //     });
+      }
+    } on TimeoutException catch (t) {
+      // A timeout occurred.
+      // print(t);
+    } on SocketException catch (e) {
+      print(e);
+      // Other exception
     }
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
   }
 
   Future<void> _actualizar() async {

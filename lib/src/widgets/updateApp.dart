@@ -22,7 +22,7 @@ class _ActualizacionPageState extends State<ActualizacionPage> {
     // TODO: implement initState
     super.initState();
     RUpgrade.setDebug(false);
-    onClickInstallApk(Provider.of<AppBloc>(context, listen: false).appLogin.config!.urldonwload);
+    onClickInstallApk(Provider.of<AppBloc>(context, listen: false).appLogin!.config!.urldonwload);
   }
 
   @override

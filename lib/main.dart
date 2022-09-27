@@ -3,17 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:openseasapp/src/bloc/appBloc.dart';
+import 'package:openseasapp/src/bloc/internetAccessBloc.dart';
+import 'package:openseasapp/src/preferencias/usuarioPrefes.dart';
 
 import 'package:openseasapp/src/router/router.dart';
 import 'package:openseasapp/src/setup/theme.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Flurorouter.configureRouter();
-  runApp(MyApp());
+  final prefs = new PreferenciasUsuario();
+  await prefs.initPrefs();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -35,13 +43,14 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppBloc()),
+        ChangeNotifierProvider(create: (_) => InternetAccessBloc()),
       ],
       child: MaterialApp(
         title: 'Open Seas Shipping',
         theme: openSeasTheme.themeData,
         onGenerateRoute: Flurorouter.router.generator,
         initialRoute: "/",
-        localizationsDelegates: [
+        localizationsDelegates: const [
           // GlobalMaterialLocalizations.delegate,
           // GlobalWidgetsLocalizations.delegate,
           DefaultCupertinoLocalizations.delegate,
@@ -52,7 +61,7 @@ class _MyAppState extends State<MyApp> {
           Locale('es'),
           // ... other locales the app supports
         ],
-        locale: Locale("es_US"),
+        locale: const Locale("es_US"),
       ),
     );
   }

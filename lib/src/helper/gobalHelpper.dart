@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:openseasapp/src/bloc/appBloc.dart';
 import 'package:openseasapp/src/helper/cresponsive.dart';
 import 'package:openseasapp/src/models/formsavemode.dart';
 import 'package:openseasapp/src/models/saveFormModel.dart';
@@ -19,6 +20,8 @@ import 'package:openseasapp/src/widgets/loading_alert_dialog.dart';
 import 'package:checkbox_grouped/checkbox_grouped.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:signature/signature.dart';
 
 import '../constants/appImages.dart';
@@ -469,7 +472,7 @@ class GlobalHelpper {
           onPickedChange: (items) {},
           onItemAdded: (item) {
             _selectLista.add(item);
-            print(_selectLista);
+            //print(_selectLista);
             selectData!(_selectLista.join("|"));
             //    selectData!(_selectLista);
           },
@@ -477,7 +480,7 @@ class GlobalHelpper {
             _selectLista.remove(item);
             selectData!(_selectLista.join("|"));
             //  selectData!(_selectLista);
-            print('$item removed from picked items');
+            //  print('$item removed from picked items');
           },
         );
 
@@ -652,7 +655,14 @@ class GlobalHelpper {
                 style: textos(ctn: context, fSize: 16, customcolor: Colors.green, fontWeight: FontWeight.bold),
               ),
               onPressed: () async {
+                final _alerta = Alertas(titulo: UserModel.instance.userLangID == "ENU" ? 'Loading' : "Cargando", ctn: context);
+                _alerta.showAlert();
                 final respuesta = await _appProvider.userkeyValidate(userkey: _controller.text);
+                if (respuesta.success) {
+                  await Provider.of<AppBloc>(context, listen: false).getFormPending();
+                  await Provider.of<AppBloc>(context, listen: false).formLoad(language: UserModel.instance.userLangID);
+                }
+                _alerta.disspose();
                 Navigator.pop(context, respuesta.success);
                 // print(respuesta);
               },
@@ -670,6 +680,49 @@ class GlobalHelpper {
           ],
         ));
     approve = await showDialog(barrierDismissible: true, context: context, builder: (BuildContext context) => dialogWithImage) ?? false;
+
+    return approve;
+  }
+
+  Future<bool> errorOpenAPP(
+    BuildContext context,
+  ) async {
+    TextEditingController _controller = TextEditingController();
+    bool approve = false;
+    // final _appProvider = AppProvider();
+    // final _prefe=PreferenciasUsuario();
+
+    Dialog dialogWithImage = Dialog(
+        backgroundColor: Colors.white,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: SizedBox(
+            // height: widthheight(ctn: context, fSize: ),
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Error try to open the App",
+              style: textos(ctn: context, fSize: 16, customcolor: color050855),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Please try later",
+              style: textos(ctn: context, fSize: 16, customcolor: color050855),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+          ],
+        )));
+    approve = await showDialog(barrierDismissible: true, context: context, builder: (BuildContext context) => Center(child: SingleChildScrollView(child: dialogWithImage))) ?? true;
 
     return approve;
   }
@@ -694,27 +747,19 @@ class GlobalHelpper {
     final ByteData data = await rootBundle.load(AppImages.openseasIco);
     final Uint8List imgBytes = data.buffer.asUint8List();
     final image = Imag.decodeImage(imgBytes);
-    // final imagefirma = Imag.decodeImage(imgBytes);
+
     bytes += ticket.image(image!);
 
     Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteEntregadoFirma.toString())).buffer.asUint8List();
     final imagefirma = Imag.decodeImage(bytes2);
 
-    // bytes += ticket.text(datos.empresa!.interTexto,
-    //     styles: const PosStyles(
-    //       align: PosAlign.center,
-    //       height: PosTextSize.size2,
-    //       width: PosTextSize.size2,
-    //     ),
-    //     linesAfter: 1);
-
     bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.center));
 
-    bytes += ticket.hr();
+    bytes += ticket.hr(len: 30);
     bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.hr();
+    bytes += ticket.hr(len: 30);
 
     bytes += ticket.row([
       PosColumn(text: "VOUCHER NO.", width: 5),
@@ -729,9 +774,9 @@ class GlobalHelpper {
     bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
     bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
     bytes += ticket.text(datos.ordenInfo!.paqueteContenido.toString(), styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.hr();
+    bytes += ticket.hr(len: 30);
     bytes += ticket.image(imagefirma!);
-    bytes += ticket.hr(ch: '=');
+    bytes += ticket.hr(ch: '=', len: 30);
     bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
     bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.cut();
@@ -752,6 +797,8 @@ class GlobalHelpper {
     final image = Imag.decodeImage(imgBytes);
     Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteFirmado.toString())).buffer.asUint8List();
     final imagefirma = Imag.decodeImage(bytes2);
+
+    final _imgQR = await qrimg(qrData: datos.ordenInfo!.paqueteId.toString());
     // final imagefirma = Imag.decodeImage(imgBytes);
 
     bytes += ticket.image(image!);
@@ -762,7 +809,7 @@ class GlobalHelpper {
 
     // bytes += ticket.hr();
     // bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.hr();
+    bytes += ticket.hr(len: 30);
     bytes += ticket.row([
       PosColumn(text: "VOUCHER NO:", width: 5),
       PosColumn(text: datos.ordenInfo!.paqueteId.toString(), width: 7, styles: const PosStyles(bold: true)),
@@ -772,12 +819,12 @@ class GlobalHelpper {
       PosColumn(text: datos.ordenInfo!.paqueteContenidoFecha1.toString(), width: 7),
     ]);
     bytes += ticket.row([
-      PosColumn(text: "SENDER NAME:", width: 5),
-      PosColumn(text: datos.ordenInfo!.paqueteSenderNombre.toString(), width: 7),
+      PosColumn(text: "SENDER NAME:", width: 6),
+      PosColumn(text: datos.ordenInfo!.paqueteSenderNombre.toString(), width: 6),
     ]);
     bytes += ticket.row([
-      PosColumn(text: "RECIEVER NAME:", width: 5),
-      PosColumn(text: datos.ordenInfo!.paqueteRecieverNombre.toString(), width: 7),
+      PosColumn(text: "RECIEVER NAME:", width: 6),
+      PosColumn(text: datos.ordenInfo!.paqueteRecieverNombre.toString(), width: 6),
     ]);
     bytes += ticket.row([
       PosColumn(text: "CONTENT:", width: 5),
@@ -790,19 +837,96 @@ class GlobalHelpper {
     // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
     // bytes += ticket.text("CONTENT:", styles: const PosStyles(align: PosAlign.left));
     // bytes += ticket.text("${datos.ordenInfo!.paqueteContenidoPaquetes.toString()} ${datos.ordenInfo!.paqueteContenidoTipo.toString()}", styles: const PosStyles(align: PosAlign.left));
-    bytes += ticket.hr();
+    bytes += ticket.hr(len: 30);
     bytes += ticket.image(imagefirma!);
-    bytes += ticket.hr(ch: '_');
+    bytes += ticket.hr(ch: '_', len: 30);
     bytes += ticket.text(datos.ordenInfo!.paqueteId.toString(), styles: const PosStyles(align: PosAlign.center));
+
+    bytes += ticket.feed(1);
+    bytes += ticket.hr(len: 30);
+    bytes += ticket.text(datos.empresa!.empresaName.toString(), styles: const PosStyles(align: PosAlign.center, bold: true));
+    bytes += ticket.image(_imgQR!);
+    bytes += ticket.text(datos.ordenInfo!.paqueteId.toString(), styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.text(datos.ordenInfo!.paqueteNumero.toString(), styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.hr(ch: '=', len: 30);
+    bytes += ticket.feed(2);
+    bytes += ticket.cut();
+    return bytes;
+  }
+
+  Future<List<int>> tmpreceiptNewForm({required PaperSize paper, required CapabilityProfile profile, required Map datos}) async {
+    final Generator ticket = Generator(paper, profile);
+    List<int> bytes = [];
+    final now = DateTime.now();
+    final formatter = DateFormat('MM/dd/yyyy H:m');
+    final String timestamp = formatter.format(now);
+
+    // Print image
+    final ByteData data = await rootBundle.load(AppImages.openseasIco);
+    final Uint8List imgBytes = data.buffer.asUint8List();
+    final image = Imag.decodeImage(imgBytes);
+    // Uint8List bytes2 = (await NetworkAssetBundle(Uri.parse(datos.ordenInfo!.paqueteEntregadoFirma.toString())).load(datos.ordenInfo!.paqueteFirmado.toString())).buffer.asUint8List();
+    final imagefirma = Imag.decodeImage(datos["shippingform-04-09"]);
+    // final _guid = uuid.v4();
+    // data = await element.signatureController.toPngBytes();
+    // final tempDir = await getTemporaryDirectory();
+    // File file = await File('${tempDir.path}/$_guid.jpeg').create();
+    // // file.writeAsBytesSync(data!);
+
+    // final _url = await AppProvider().uploadImage(image: file, guid: _guid);
+
+    final _imgQR = await qrimg(qrData: datos["guid"] ?? datos["shippingform-01-06"]);
+    // final imagefirma = Imag.decodeImage(imgBytes);
+
+    bytes += ticket.image(image!);
+    bytes += ticket.text("Voucher Temporal", styles: const PosStyles(align: PosAlign.center, bold: true));
+    // bytes += ticket.text(datos.empresa!.interDireccion, styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.empresa!.interTelefono, styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.empresa!.interEmail, styles: const PosStyles(align: PosAlign.left));
+
+    // bytes += ticket.hr();
+    // bytes += ticket.text('PROOF OF DELIVERY', styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.hr(len: 30);
+    bytes += ticket.row([
+      PosColumn(text: "VOUCHER:", width: 2),
+      PosColumn(text: datos["guid"] ?? datos["shippingform-01-06"], width: 10, styles: const PosStyles(bold: true)),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "DATE:", width: 3),
+      PosColumn(text: DateTime.now().toString(), width: 9),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "SENDER:", width: 3),
+      PosColumn(text: datos["shippingform-01-02"], width: 9),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "RECIEVER:", width: 3),
+      PosColumn(text: datos["shippingform-02-02"], width: 9),
+    ]);
+    bytes += ticket.row([
+      PosColumn(text: "CONTENT:", width: 3),
+      PosColumn(text: "${datos["shippingform-03-01"]}", width: 9),
+    ]);
+    // b
+    // bytes += ticket.text("SENDER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteSenderNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("RECIEVER NAME:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteRecieverNombre.toString(), styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("CONTENT:", styles: const PosStyles(align: PosAlign.left));
+    // bytes += ticket.text("${datos.ordenInfo!.paqueteContenidoPaquetes.toString()} ${datos.ordenInfo!.paqueteContenidoTipo.toString()}", styles: const PosStyles(align: PosAlign.left));
+    bytes += ticket.hr(len: 30);
+    bytes += ticket.image(imagefirma!);
+    bytes += ticket.hr(ch: '_', len: 30);
+    bytes += ticket.text(datos["guid"] ?? datos["shippingform-01-06"], styles: const PosStyles(align: PosAlign.center));
     // bytes += ticket.text('Thank you!', styles: const PosStyles(align: PosAlign.center, bold: true, width: PosTextSize.size4));
     // bytes += ticket.text(timestamp, styles: const PosStyles(align: PosAlign.center));
     bytes += ticket.feed(1);
-    bytes += ticket.hr();
-    bytes += ticket.text(datos.empresa!.empresaName.toString(), styles: const PosStyles(align: PosAlign.center, bold: true));
-    bytes += ticket.qrcode(datos.ordenInfo!.paqueteId.toString(), size: QRSize.Size6);
-    bytes += ticket.text(datos.ordenInfo!.paqueteId.toString(), styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.text(datos.ordenInfo!.paqueteNumero.toString(), styles: const PosStyles(align: PosAlign.center));
-    bytes += ticket.hr(ch: '=');
+    bytes += ticket.hr(len: 30);
+    // bytes += ticket.text(datos.empresa!.empresaName.toString(), styles: const PosStyles(align: PosAlign.center, bold: true));
+    bytes += ticket.image(_imgQR!);
+    bytes += ticket.text(datos["guid"] ?? datos["shippingform-01-06"], styles: const PosStyles(align: PosAlign.center));
+    // bytes += ticket.text(datos.ordenInfo!.paqueteNumero.toString(), styles: const PosStyles(align: PosAlign.center));
+    bytes += ticket.hr(ch: '=', len: 30);
     bytes += ticket.feed(2);
     bytes += ticket.cut();
     return bytes;
@@ -821,7 +945,7 @@ class GlobalHelpper {
       bool conecctionStatus = await PrintBluetoothThermal.connectionStatus;
 
       if (conecctionStatus) {
-        const PaperSize paper = PaperSize.mm58;
+        const PaperSize paper = PaperSize.mm80;
         final profile = await CapabilityProfile.load();
 
         await PrintBluetoothThermal.writeBytes(tipo == 0 ? await receiptSaveForm(paper: paper, profile: profile, datos: datos!) : await receiptNewForm(paper: paper, profile: profile, datos: datos2!));
@@ -829,6 +953,27 @@ class GlobalHelpper {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<Imag.Image?> qrimg({required String qrData, double qrSize = 200}) async {
+    // String qrData = "google.com";
+    // const double qrSize = 200;
+    // try {
+    final uiImg = await QrPainter(
+      data: qrData,
+      version: QrVersions.auto,
+      gapless: false,
+    ).toImageData(qrSize);
+    final dir = await getTemporaryDirectory();
+    final pathName = '${dir.path}/qr_tmp.png';
+    final qrFile = File(pathName);
+    final imgFile = await qrFile.writeAsBytes(uiImg!.buffer.asUint8List());
+
+    return Imag.decodeImage(imgFile.readAsBytesSync());
+    // } catch (e) {
+    //   print(e);
+    //   return null;
+    // }
   }
 }
 
